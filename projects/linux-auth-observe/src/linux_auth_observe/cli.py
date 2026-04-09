@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from argparse import ArgumentParser, Namespace
-from collections.abc import Callable, Iterable
-from datetime import datetime, timezone
+from collections.abc import Callable
+from contextlib import ExitStack
 from pathlib import Path
+import json
 import sys
 
 from .filters import iter_filtered_events, load_events
@@ -27,13 +28,16 @@ def build_parser() -> ArgumentParser:
     normalize_parser.add_argument(
         "--year",
         type=int,
-        default=datetime.now(timezone.utc).year,
-        help="reference year for yearless syslog timestamps",
+        help="optional explicit starting year for yearless syslog timestamps",
     )
     normalize_parser.add_argument(
         "--timezone",
         default="local",
         help="IANA timezone name for syslog timestamps, or 'local'",
+    )
+    normalize_parser.add_argument(
+        "--error-output",
+        help="optional JSONL file for structured parse errors during normalize",
     )
     normalize_parser.set_defaults(handler=_handle_normalize)
 
@@ -74,11 +78,29 @@ def _handle_normalize(args: Namespace) -> int:
     errors = 0
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with input_path.open("r", encoding="utf-8") as source_handle, output_path.open(
-        "w",
-        encoding="utf-8",
-        newline="\n",
-    ) as output_handle:
+    error_output_path = Path(args.error_output) if args.error_output else None
+    if error_output_path is not None:
+        error_output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with ExitStack() as stack:
+        source_handle = stack.enter_context(input_path.open("r", encoding="utf-8"))
+        output_handle = stack.enter_context(
+            output_path.open(
+                "w",
+                encoding="utf-8",
+                newline="\n",
+            )
+        )
+        error_handle = None
+        if error_output_path is not None:
+            error_handle = stack.enter_context(
+                error_output_path.open(
+                    "w",
+                    encoding="utf-8",
+                    newline="\n",
+                )
+            )
+
         for line_number, raw_line in enumerate(source_handle, start=1):
             line = raw_line.rstrip("\n")
             if not line.strip():
@@ -88,7 +110,21 @@ def _handle_normalize(args: Namespace) -> int:
                 event = parser_fn(line, **parser_kwargs)
             except ValueError as exc:
                 errors += 1
-                print(f"line {line_number}: {exc}", file=sys.stderr)
+                error_record = {
+                    "input": str(input_path),
+                    "source": source,
+                    "line": line_number,
+                    "error_type": exc.__class__.__name__,
+                    "message": str(exc),
+                    "raw": line,
+                }
+                print(
+                    f"error source={source} line={line_number} type={exc.__class__.__name__} message={exc}",
+                    file=sys.stderr,
+                )
+                if error_handle is not None:
+                    error_handle.write(json.dumps(error_record, ensure_ascii=False))
+                    error_handle.write("\n")
                 continue
 
             if event is None:
@@ -149,7 +185,13 @@ def _detect_source(input_path: Path, declared_source: str) -> str:
     return "auth.log"
 
 
-def _resolve_parser(source: str, year: int, timezone_name: str) -> tuple[Callable[..., object], dict[str, object]]:
+def _resolve_parser(source: str, year: int | None, timezone_name: str) -> tuple[Callable[..., object], dict[str, object]]:
     if source == "journal_json":
         return journal_json.parse_line, {}
-    return syslog_auth.parse_line, {"collector": source, "year": year, "timezone_name": timezone_name}
+    timestamp_resolver = syslog_auth.build_timestamp_resolver(year=year, timezone_name=timezone_name)
+    return syslog_auth.parse_line, {
+        "collector": source,
+        "year": year,
+        "timezone_name": timezone_name,
+        "timestamp_resolver": timestamp_resolver,
+    }

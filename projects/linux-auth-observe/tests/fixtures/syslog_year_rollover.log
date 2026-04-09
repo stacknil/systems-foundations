@@ -1,0 +1,3 @@
+Dec 31 23:59:58 year-lab sshd[9100]: Failed password for alice from 192.0.2.10 port 51422 ssh2
+Jan  1 00:00:03 year-lab sshd[9101]: Accepted password for alice from 192.0.2.10 port 51422 ssh2
+Jan  1 00:00:04 year-lab sshd[9101]: pam_unix(sshd:session): session opened for user alice(uid=1000) by (uid=0)

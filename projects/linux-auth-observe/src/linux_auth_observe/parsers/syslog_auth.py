@@ -1,18 +1,42 @@
 from __future__ import annotations
 
-from .common import SYSLOG_LINE_RE, classify_event, coerce_int, parse_syslog_timestamp
+from datetime import datetime
+
+from .common import (
+    SYSLOG_LINE_RE,
+    MalformedSyslogLineError,
+    SyslogTimestampResolver,
+    classify_event,
+    coerce_int,
+    parse_syslog_timestamp,
+)
+
+
+def build_timestamp_resolver(
+    *,
+    year: int | None = None,
+    timezone_name: str = "local",
+    reference_time: datetime | None = None,
+) -> SyslogTimestampResolver:
+    return SyslogTimestampResolver(
+        timezone_name=timezone_name,
+        year=year,
+        reference_time=reference_time,
+    )
 
 
 def parse_line(
     line: str,
     *,
     collector: str,
-    year: int,
+    year: int | None = None,
     timezone_name: str = "local",
+    reference_time: datetime | None = None,
+    timestamp_resolver: SyslogTimestampResolver | None = None,
 ):
     match = SYSLOG_LINE_RE.match(line)
     if match is None:
-        return None
+        raise MalformedSyslogLineError("malformed syslog auth line")
 
     ts = parse_syslog_timestamp(
         match.group("month"),
@@ -20,6 +44,8 @@ def parse_line(
         match.group("clock"),
         year=year,
         timezone_name=timezone_name,
+        reference_time=reference_time,
+        resolver=timestamp_resolver,
     )
     return classify_event(
         ts=ts,
