@@ -2,33 +2,69 @@
 
 `linux-auth-observe` is a small deterministic mini-lab for normalizing Linux auth evidence into JSONL, filtering it, and generating a short Markdown report.
 
-## Scope
+## Supported Inputs
 
-- Supported inputs in v0.1:
-  - `journalctl --output=json` line-delimited exports
-  - Ubuntu or Debian `auth.log`
-  - RHEL or CentOS `secure`
-- Supported outputs:
-  - normalized JSONL
-  - filtered JSONL to stdout
-  - Markdown summary report
-- Not included in v0.1:
-  - `audit.log`
-  - real-time tailing
-  - databases
-  - packaging or publishing workflows
+- `journalctl --output=json` line-delimited exports
+- Ubuntu or Debian `auth.log`
+- RHEL or CentOS `secure`
 
-## Quickstart
+## Non-Goals
+
+- `audit.log`
+- real-time tailing or monitoring
+- databases or storage layers
+- packaging or publishing workflows
+
+## Validation Status
+
+- `pytest -q` currently passes for parser behavior, filtering, summary generation, CLI workflow, golden regression checks, and syslog year-rollover coverage
+- `normalize` is covered against the three supported fixture families
+- `filter` is covered for `user`, `IP`, and `service` constraints
+- `summary` is covered for readable Markdown output
+- `error-output` is covered as an optional JSONL artifact for parse failures during batch normalization
+
+## Assumptions
+
+- Syslog inputs are line-oriented and follow a standard auth/syslog prefix with no embedded year
+- Syslog timestamps are interpreted in a chosen timezone, defaulting to `local`
+- If `--year` is provided, it anchors the first syslog record and later `Dec -> Jan` transitions roll forward into the next year
+- If `--year` is omitted, the parser infers the starting year from the first syslog record relative to the current time in the chosen timezone; if the first record would land more than about half a year in the future, it is treated as the previous year
+- Journal inputs are one JSON object per line and map from `MESSAGE`, `_PID`, `_COMM`, and `_SYSTEMD_UNIT` when available
+- `_PID` is preserved as contextual process metadata when present; it should not be read as a guaranteed identity anchor on its own
+- Unsupported or malformed records fail clearly per line without stopping the full batch
+
+## End-to-End Workflow
 
 ```bash
 python -m pip install -e .[dev]
-python -m linux_auth_observe normalize --input tests/fixtures/ubuntu_auth.log --source auto --year 2026 --timezone Asia/Shanghai --output output/events.jsonl
-python -m linux_auth_observe filter --input output/events.jsonl --user alice --ip 192.0.2.10 --service sshd
-python -m linux_auth_observe summary --input output/events.jsonl --output output/summary.md
-python -m pytest -q
+
+python -m linux_auth_observe normalize \
+  --input tests/fixtures/ubuntu_auth.log \
+  --source auto \
+  --year 2026 \
+  --timezone Asia/Shanghai \
+  --output output/events.jsonl
+
+python -m linux_auth_observe filter \
+  --input output/events.jsonl \
+  --user alice \
+  --ip 192.0.2.10 \
+  --service sshd
+
+python -m linux_auth_observe summary \
+  --input output/events.jsonl \
+  --output output/summary.md
+
+python -m linux_auth_observe normalize \
+  --input tests/fixtures/ubuntu_auth_with_error.log \
+  --source auto \
+  --year 2026 \
+  --timezone Asia/Shanghai \
+  --output output/events.jsonl \
+  --error-output output/parse-errors.jsonl
 ```
 
-`normalize` defaults to the current UTC year and the local system timezone when parsing yearless syslog timestamps. Pass `--year` and `--timezone` to replay fixtures deterministically.
+The intended flow is `normalize -> filter -> summary`, with `--error-output` available when you want a structured JSONL artifact for parse failures while the batch continues.
 
 ## Event Schema
 
