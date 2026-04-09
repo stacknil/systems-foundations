@@ -1,0 +1,10 @@
+model = "gpt-5-codex"
+
+[project]
+trusted = true
+
+[tools]
+web_search = false
+
+[approval_policy]
+mode = "on-request"
