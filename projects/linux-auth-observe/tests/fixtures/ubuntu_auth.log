@@ -1,0 +1,4 @@
+Apr  8 21:20:01 lab-host sshd[1234]: Failed password for alice from 192.0.2.10 port 51422 ssh2
+Apr  8 21:20:18 lab-host sshd[1235]: Accepted password for alice from 192.0.2.10 port 51422 ssh2
+Apr  8 21:20:19 lab-host sshd[1235]: pam_unix(sshd:session): session opened for user alice(uid=1000) by (uid=0)
+Apr  8 21:25:01 lab-host sshd[1235]: pam_unix(sshd:session): session closed for user alice

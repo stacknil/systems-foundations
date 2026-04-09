@@ -1,0 +1,3 @@
+{"__REALTIME_TIMESTAMP":"1775654401000000","_HOSTNAME":"lab-host","SYSLOG_IDENTIFIER":"sshd","_PID":"4123","_SYSTEMD_UNIT":"sshd.service","MESSAGE":"Accepted password for bob from 198.51.100.24 port 60222 ssh2"}
+{"__REALTIME_TIMESTAMP":"1775654460000000","_HOSTNAME":"lab-host","SYSLOG_IDENTIFIER":"sudo","_PID":"4222","MESSAGE":"bob : TTY=pts/1 ; PWD=/home/bob ; USER=root ; COMMAND=/usr/bin/systemctl status sshd.service"}
+{"__REALTIME_TIMESTAMP":"1775654520000000","_HOSTNAME":"lab-host","SYSLOG_IDENTIFIER":"systemd","_PID":"1","UNIT":"sshd.service","MESSAGE":"Failed to start sshd.service - OpenSSH server daemon."}

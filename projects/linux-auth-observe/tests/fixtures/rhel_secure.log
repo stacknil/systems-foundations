@@ -1,0 +1,4 @@
+Apr  8 21:30:00 rhel-lab sudo[2222]: alice : TTY=pts/0 ; PWD=/home/alice ; USER=root ; COMMAND=/usr/bin/id
+Apr  8 21:30:00 rhel-lab sudo[2222]: pam_unix(sudo:session): session opened for user root(uid=0) by alice(uid=1000)
+Apr  8 21:31:00 rhel-lab sudo[2222]: pam_unix(sudo:session): session closed for user root
+Apr  8 21:40:00 rhel-lab su[3333]: pam_unix(su-l:session): session opened for user root(uid=0) by alice(uid=1000)
