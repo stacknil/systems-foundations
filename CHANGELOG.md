@@ -1,8 +1,16 @@
 # Changelog
 
-All notable changes to this repository will be documented in this file.
+All notable changes to this project will be documented in this file.
 
-## v0.1.0 - 2026-04-10
+## [Unreleased]
+
+### Added
+
+### Changed
+
+### Fixed
+
+## [v0.1.0] - 2026-04-10
 
 First Credible Mini-Lab
 
@@ -19,3 +27,6 @@ First Credible Mini-Lab
 
 - Added release notes in `docs/release-v0.1.0.md`
 - Added root README release entry and latest release link
+
+[Unreleased]: https://github.com/stacknil/systems-foundations/compare/v0.1.0...HEAD
+[v0.1.0]: https://github.com/stacknil/systems-foundations/releases/tag/v0.1.0
