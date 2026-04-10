@@ -10,6 +10,8 @@ The goal is to keep each lab narrow, deterministic, and easy to inspect end to e
 
 `linux-auth-observe` is the first mini-lab in the repository. It focuses on Linux auth evidence from exported journald JSON lines plus distro auth syslog files, normalizes them into JSONL, supports simple filtering, and produces a Markdown summary report.
 
+Latest stable release: [v0.1.0](https://github.com/stacknil/systems-foundations/releases/latest)
+
 ## Repository Shape
 
 - `projects/`: focused mini-labs
