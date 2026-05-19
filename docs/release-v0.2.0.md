@@ -1,4 +1,4 @@
-# v0.2.0 Release Notes (Draft)
+# v0.2.0 Release Notes
 
 ## Title
 
@@ -8,7 +8,7 @@ Second Credible Mini-Lab
 
 `systems-foundations` adds a second focused mini-lab: `projects/linux-socket-observe`.
 
-This draft release packages a narrow workflow for reviewing local Linux networking state from saved command-output snapshots:
+This release packages a narrow workflow for reviewing local Linux networking state from saved command-output snapshots:
 
 - build one normalized JSON snapshot from `ss` plus selected `iproute2` outputs
 - compare two snapshots deterministically
