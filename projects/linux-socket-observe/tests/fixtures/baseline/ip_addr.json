@@ -1,0 +1,25 @@
+[
+  {
+    "ifindex": 1,
+    "ifname": "lo",
+    "addr_info": [
+      {"family": "inet", "local": "127.0.0.1", "prefixlen": 8, "scope": "host", "label": "lo"},
+      {"family": "inet6", "local": "::1", "prefixlen": 128, "scope": "host"}
+    ]
+  },
+  {
+    "ifindex": 2,
+    "ifname": "eth0",
+    "addr_info": [
+      {"family": "inet", "local": "192.0.2.10", "prefixlen": 24, "scope": "global", "broadcast": "192.0.2.255", "label": "eth0"},
+      {"family": "inet6", "local": "2001:db8::10", "prefixlen": 64, "scope": "global"}
+    ]
+  },
+  {
+    "ifindex": 3,
+    "ifname": "cni0",
+    "addr_info": [
+      {"family": "inet", "local": "10.244.0.1", "prefixlen": 24, "scope": "global", "broadcast": "10.244.0.255", "label": "cni0"}
+    ]
+  }
+]

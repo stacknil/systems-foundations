@@ -1,0 +1,5 @@
+[
+  {"dst": "10.8.0.2", "dev": "wg0", "nud": "PERMANENT"},
+  {"dst": "192.0.2.1", "dev": "eth0", "lladdr": "52:54:00:aa:bb:01", "nud": "STALE"},
+  {"dst": "192.0.2.77", "dev": "eth0", "lladdr": "52:54:00:aa:bb:77", "nud": "REACHABLE"}
+]

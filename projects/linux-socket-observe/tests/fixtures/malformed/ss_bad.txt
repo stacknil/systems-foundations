@@ -1,0 +1,2 @@
+Netid State  Recv-Q Send-Q Local Address:Port   Peer Address:Port    Process
+tcp   ESTAB  0      0      192.0.2.10           198.51.100.24:51422 users:(("sshd",pid=1234,fd=3))

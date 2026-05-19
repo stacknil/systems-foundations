@@ -1,0 +1,27 @@
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default
+    RX:  bytes packets errors dropped overrun mcast
+    1000 10 0 0 0 0
+    RX errors:  length crc frame fifo missed
+    0 0 0 0 0
+    TX:  bytes packets errors dropped carrier collsns
+    1000 10 0 0 0 0
+    TX errors: aborted fifo window heartbeat transns
+    0 0 0 0 0
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default
+    RX:  bytes packets errors dropped overrun mcast
+    123456 1234 0 0 0 12
+    RX errors:  length crc frame fifo missed
+    0 0 0 0 0
+    TX:  bytes packets errors dropped carrier collsns
+    654321 1200 0 0 0 0
+    TX errors: aborted fifo window heartbeat transns
+    0 0 0 0 0
+3: cni0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UP mode DEFAULT group default
+    RX:  bytes packets errors dropped overrun mcast
+    2048 32 0 0 0 0
+    RX errors:  length crc frame fifo missed
+    0 0 0 0 0
+    TX:  bytes packets errors dropped carrier collsns
+    4096 48 0 0 0 0
+    TX errors: aborted fifo window heartbeat transns
+    0 0 0 0 0

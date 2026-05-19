@@ -1,0 +1,209 @@
+{
+  "schema_version": "0.1.0",
+  "sockets": [
+    {
+      "netid": "tcp",
+      "state": "ESTAB",
+      "family": "inet",
+      "recv_q": 0,
+      "send_q": 0,
+      "local_address": "192.0.2.10",
+      "local_port": 22,
+      "peer_address": "198.51.100.24",
+      "peer_port": 51422,
+      "processes": [
+        "sshd"
+      ],
+      "pids": [
+        1234
+      ]
+    },
+    {
+      "netid": "tcp",
+      "state": "LISTEN",
+      "family": "inet",
+      "recv_q": 0,
+      "send_q": 128,
+      "local_address": "127.0.0.1",
+      "local_port": 5432,
+      "peer_address": "0.0.0.0",
+      "peer_port": "*",
+      "processes": [
+        "postgres"
+      ],
+      "pids": [
+        2345
+      ]
+    },
+    {
+      "netid": "tcp",
+      "state": "LISTEN",
+      "family": "inet6",
+      "recv_q": 0,
+      "send_q": 64,
+      "local_address": "2001:db8::10",
+      "local_port": 443,
+      "peer_address": "::",
+      "peer_port": "*",
+      "processes": [
+        "nginx"
+      ],
+      "pids": [
+        3456
+      ]
+    },
+    {
+      "netid": "udp",
+      "state": "UNCONN",
+      "family": "inet",
+      "recv_q": 0,
+      "send_q": 0,
+      "local_address": "0.0.0.0",
+      "local_port": 68,
+      "peer_address": "0.0.0.0",
+      "peer_port": "*",
+      "processes": [
+        "dhclient"
+      ],
+      "pids": [
+        456
+      ]
+    }
+  ],
+  "interfaces": [
+    {
+      "ifindex": 1,
+      "ifname": "lo",
+      "flags": [
+        "LOOPBACK",
+        "LOWER_UP",
+        "UP"
+      ],
+      "mtu": 65536,
+      "operstate": "UNKNOWN",
+      "link_type": "loopback",
+      "address": "00:00:00:00:00:00",
+      "broadcast": "00:00:00:00:00:00",
+      "stats": {
+        "rx_bytes": 1000,
+        "rx_packets": 10,
+        "tx_bytes": 1000,
+        "tx_packets": 10
+      }
+    },
+    {
+      "ifindex": 2,
+      "ifname": "eth0",
+      "flags": [
+        "BROADCAST",
+        "LOWER_UP",
+        "MULTICAST",
+        "UP"
+      ],
+      "mtu": 1500,
+      "operstate": "UP",
+      "link_type": "ether",
+      "address": "52:54:00:12:34:56",
+      "broadcast": "ff:ff:ff:ff:ff:ff",
+      "stats": {
+        "rx_bytes": 123456,
+        "rx_packets": 1234,
+        "tx_bytes": 654321,
+        "tx_packets": 1200
+      }
+    },
+    {
+      "ifindex": 3,
+      "ifname": "cni0",
+      "flags": [
+        "BROADCAST",
+        "LOWER_UP",
+        "MULTICAST",
+        "UP"
+      ],
+      "mtu": 1450,
+      "operstate": "UP",
+      "link_type": "ether",
+      "address": "0a:58:0a:f4:00:01",
+      "broadcast": "ff:ff:ff:ff:ff:ff",
+      "stats": {
+        "rx_bytes": 2048,
+        "rx_packets": 32,
+        "tx_bytes": 4096,
+        "tx_packets": 48
+      }
+    }
+  ],
+  "addresses": [
+    {
+      "ifindex": 3,
+      "ifname": "cni0",
+      "family": "inet",
+      "local": "10.244.0.1",
+      "prefixlen": 24,
+      "scope": "global",
+      "label": "cni0",
+      "broadcast": "10.244.0.255"
+    },
+    {
+      "ifindex": 2,
+      "ifname": "eth0",
+      "family": "inet",
+      "local": "192.0.2.10",
+      "prefixlen": 24,
+      "scope": "global",
+      "label": "eth0",
+      "broadcast": "192.0.2.255"
+    },
+    {
+      "ifindex": 2,
+      "ifname": "eth0",
+      "family": "inet6",
+      "local": "2001:db8::10",
+      "prefixlen": 64,
+      "scope": "global",
+      "label": null,
+      "broadcast": null
+    },
+    {
+      "ifindex": 1,
+      "ifname": "lo",
+      "family": "inet",
+      "local": "127.0.0.1",
+      "prefixlen": 8,
+      "scope": "host",
+      "label": "lo",
+      "broadcast": null
+    },
+    {
+      "ifindex": 1,
+      "ifname": "lo",
+      "family": "inet6",
+      "local": "::1",
+      "prefixlen": 128,
+      "scope": "host",
+      "label": null,
+      "broadcast": null
+    }
+  ],
+  "neighbors": [
+    {
+      "dev": "cni0",
+      "dst": "10.244.0.42",
+      "lladdr": "0a:58:0a:f4:00:2a",
+      "state": "REACHABLE"
+    },
+    {
+      "dev": "eth0",
+      "dst": "192.0.2.1",
+      "lladdr": "52:54:00:aa:bb:01",
+      "state": "REACHABLE"
+    },
+    {
+      "dev": "eth0",
+      "dst": "192.0.2.55",
+      "lladdr": "52:54:00:aa:bb:55",
+      "state": "STALE"
+    }
+  ]
+}
