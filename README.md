@@ -12,6 +12,13 @@ The goal is to keep each lab narrow, deterministic, and easy to inspect end to e
 
 Latest stable release: [v0.1.0](https://github.com/stacknil/systems-foundations/releases/latest)
 
+## Linux Notes
+
+- [Linux notes index](notes/linux/README.md)
+- [Public note policy](notes/linux/public-note-policy.md)
+- [Text processing pipelines](notes/linux/text-processing-pipelines.md)
+- [System information and disk triage](notes/linux/system-information-and-disk-triage.md)
+
 ## Repository Shape
 
 - `projects/`: focused mini-labs
