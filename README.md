@@ -6,14 +6,11 @@ The goal is to keep each lab narrow, deterministic, and easy to inspect end to e
 
 ## Current Mini-Labs
 
-- `projects/linux-auth-observe`
-- `projects/linux-socket-observe`
-
-`linux-auth-observe` focuses on Linux auth evidence from exported journald JSON lines plus distro auth syslog files, normalizes them into JSONL, supports simple filtering, and produces a Markdown summary report.
-
-`linux-socket-observe` focuses on local Linux networking state snapshots from `ss` and selected `iproute2` outputs, normalizes them into a single snapshot artifact, and produces a Markdown diff between two snapshots.
+- [`projects/linux-auth-observe`](projects/linux-auth-observe/README.md): Linux auth evidence mini-lab for exported journald JSON lines and distro auth syslog files. The current stable release, [`v0.1.0`](https://github.com/stacknil/systems-foundations/releases/latest), is centered on this workflow.
+- [`projects/linux-socket-observe`](projects/linux-socket-observe/README.md): local Linux networking state mini-lab for `ss` plus selected `iproute2` snapshots. It builds one normalized snapshot artifact and generates a Markdown diff between two snapshots.
 
 Latest stable release: [v0.1.0](https://github.com/stacknil/systems-foundations/releases/latest)
+Next release draft: [v0.2.0 release notes](docs/release-v0.2.0.md)
 
 ## Linux Notes
 
