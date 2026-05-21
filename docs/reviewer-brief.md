@@ -13,6 +13,14 @@ Current stable labs:
 - `projects/linux-auth-observe` for normalizing Linux auth evidence, filtering it, and generating short Markdown summaries
 - `projects/linux-socket-observe` for turning saved `ss` and `iproute2` snapshots into normalized JSON and Markdown diffs
 
+## Reviewer Evidence
+
+- Reproducible command: `python -m linux_auth_observe normalize --input tests/fixtures/ubuntu_auth.log --source auto --year 2026 --timezone Asia/Shanghai --output output/events.jsonl`
+- Deterministic outputs: normalized auth JSONL, parse-error JSONL, auth summaries, socket snapshot JSON, and socket diff Markdown reports.
+- Tests / CI: pytest coverage for parsers, filtering, summaries, CLI workflows, golden regression artifacts, and malformed input handling.
+- Release evidence: versioned mini-lab release notes for `v0.1.0` and `v0.2.0`.
+- Non-goals: live monitoring, packet capture, `/proc/net/tcp` parsing, `audit.log` support, databases, or offensive functionality.
+
 ## Quick run
 
 ```bash
