@@ -1,0 +1,8 @@
+# Python local artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Mini-lab generated output artifacts
+projects/*/output/*
+!projects/*/output/.gitkeep
