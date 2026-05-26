@@ -6,9 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Added `docs/reviewer-brief.md` as a short external-review entry point.
+- Added `.gitignore` rules for local Python test artifacts and generated mini-lab output files.
+
 ### Changed
 
+- Updated the root README with a reviewer brief link.
+- Updated repository agent guidance to reflect the current two-mini-lab scope and boundaries.
+
 ### Fixed
+
+- Tightened reviewer brief wording to avoid implying CI coverage where only local pytest coverage is currently documented.
+- Made the reviewer brief quick-run path separator platform-neutral.
 
 ## [v0.2.0] - 2026-05-20
 
