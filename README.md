@@ -11,10 +11,12 @@ The goal is to keep each lab narrow, deterministic, and easy to inspect end to e
 
 Latest stable release: [v0.2.0](https://github.com/stacknil/systems-foundations/releases/latest)
 Latest release notes: [v0.2.0](docs/release-v0.2.0.md)
+Docs index: [docs/README.md](docs/README.md)
 Reviewer brief: [docs/reviewer-brief.md](docs/reviewer-brief.md)
 
 ## Linux Notes
 
+- [Notes index](notes/README.md)
 - [Linux notes index](notes/linux/README.md)
 - [Public note policy](notes/linux/public-note-policy.md)
 - [Text processing pipelines](notes/linux/text-processing-pipelines.md)

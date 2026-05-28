@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Added `docs/reviewer-brief.md` as a short external-review entry point.
+- Added repository-level docs and notes index pages.
 - Added `.gitignore` rules for local Python test artifacts and generated mini-lab output files.
 
 ### Changed
