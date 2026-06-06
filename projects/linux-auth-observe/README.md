@@ -23,6 +23,11 @@
 - `summary` is covered for readable Markdown output
 - `error-output` is covered as an optional JSONL artifact for parse failures during batch normalization
 
+## Related Notes
+
+- [Auth event schema](../../notes/auth-event-schema.md)
+- [Journald and syslog basics](../../notes/journald-syslog-basics.md)
+
 ## Assumptions
 
 - Syslog inputs are line-oriented and follow a standard auth/syslog prefix with no embedded year

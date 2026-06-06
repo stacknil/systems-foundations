@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - Added `docs/reviewer-brief.md` as a short external-review entry point.
 - Added repository-level docs and notes index pages.
+- Added related-notes links from each mini-lab README to its supporting notes.
 - Added `.gitignore` rules for local Python test artifacts and generated mini-lab output files.
 
 ### Changed

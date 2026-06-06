@@ -64,6 +64,11 @@ Interface statistics are attached to `interfaces[].stats` only when `--ip-link-s
 
 The current snapshot schema version is `0.1.0`.
 
+## Related Notes
+
+- [Network snapshot schema](../../notes/network-snapshot-schema.md)
+- [ss and iproute2 basics](../../notes/ss-iproute2-basics.md)
+
 ## Assumptions
 
 - Inputs are local point-in-time command-output snapshots, not live streams.
