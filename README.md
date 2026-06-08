@@ -23,6 +23,18 @@ Reviewer brief: [docs/reviewer-brief.md](docs/reviewer-brief.md)
 - [Text processing pipelines](notes/linux/text-processing-pipelines.md)
 - [System information and disk triage](notes/linux/system-information-and-disk-triage.md)
 
+## Local Validation
+
+Each mini-lab keeps its own tests:
+
+```bash
+cd projects/linux-auth-observe
+python -m pytest -q
+
+cd ../linux-socket-observe
+python -m pytest -q
+```
+
 ## Repository Shape
 
 - `projects/`: focused mini-labs
