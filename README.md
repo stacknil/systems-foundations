@@ -11,6 +11,7 @@ The goal is to keep each lab narrow, deterministic, and easy to inspect end to e
 
 Latest stable release: [v0.2.0](https://github.com/stacknil/systems-foundations/releases/latest)
 Latest release notes: [v0.2.0](docs/release-v0.2.0.md)
+Changelog: [CHANGELOG.md](CHANGELOG.md)
 Docs index: [docs/README.md](docs/README.md)
 Reviewer brief: [docs/reviewer-brief.md](docs/reviewer-brief.md)
 
@@ -25,5 +26,6 @@ Reviewer brief: [docs/reviewer-brief.md](docs/reviewer-brief.md)
 ## Repository Shape
 
 - `projects/`: focused mini-labs
+- `docs/`: reviewer-facing docs and release notes
 - `notes/`: short learning notes and schemas that support the labs
 - `.codex/`: local assistant configuration for this repository

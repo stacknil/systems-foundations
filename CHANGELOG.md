@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Added changelog and docs-directory links to the root README and docs index.
 - Updated the root README with a reviewer brief link.
 - Updated repository agent guidance to reflect the current two-mini-lab scope and boundaries.
 
