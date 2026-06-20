@@ -67,6 +67,7 @@ The current snapshot schema version is `0.1.0`.
 ## Related Notes
 
 - [Network snapshot schema](../../notes/network-snapshot-schema.md)
+- [Network state to detection thinking](../../notes/network-state-to-detection-thinking.md)
 - [ss and iproute2 basics](../../notes/ss-iproute2-basics.md)
 
 ## Assumptions
