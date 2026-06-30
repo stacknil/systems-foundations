@@ -2,6 +2,8 @@
 
 `systems-foundations` is a training repository for small, reviewable labs around Linux and systems fundamentals.
 
+This repository supports the lower-level evidence assumptions used by LogLens and telemetry-lab.
+
 The goal is to keep each lab narrow, deterministic, and easy to inspect end to end: input evidence, normalization, filtering, reporting, and notes that explain the basics without pretending to be a full platform.
 
 ## Current Mini-Labs

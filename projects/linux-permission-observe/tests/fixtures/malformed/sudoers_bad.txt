@@ -1,0 +1,2 @@
+alice ALL NOPASSWD: /usr/bin/id
+

@@ -4,6 +4,7 @@ Short learning notes and schemas that support the mini-labs.
 
 ## Mini-Lab Notes
 
+- [408 to Linux security](408-to-linux-security.md)
 - [Auth event schema](auth-event-schema.md)
 - [Journald and syslog basics](journald-syslog-basics.md)
 - [Network snapshot schema](network-snapshot-schema.md)

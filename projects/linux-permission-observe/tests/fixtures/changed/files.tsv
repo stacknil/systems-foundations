@@ -1,0 +1,7 @@
+path	mode	owner	group	type
+/etc/ssh/sshd_config	0664	root	sudo	regular file
+/usr/local/bin/deploy-helper	0775	deploybot	deploy	regular file
+/var/log/app/app.log	0644	app	app	regular file
+/opt/app/config.yml	0640	app	app	regular file
+/etc/sudoers.d/app-admin	0440	root	root	regular file
+

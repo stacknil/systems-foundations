@@ -1,0 +1,6 @@
+path	mode	owner	group	type
+/etc/ssh/sshd_config	0644	root	root	regular file
+/usr/local/bin/deploy-helper	0755	root	root	regular file
+/var/log/app/app.log	0640	app	app	regular file
+/opt/app/config.yml	0640	app	app	regular file
+

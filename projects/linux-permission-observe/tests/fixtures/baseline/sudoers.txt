@@ -1,0 +1,3 @@
+%sudo ALL=(ALL:ALL) ALL
+deploybot lab-host=(root) NOPASSWD: /usr/bin/systemctl restart app
+

@@ -1,0 +1,91 @@
+{
+  "schema_version": "0.1.0",
+  "files": [
+    {
+      "path": "/etc/ssh/sshd_config",
+      "mode": "0644",
+      "owner": "root",
+      "group": "root",
+      "type": "regular file"
+    },
+    {
+      "path": "/opt/app/config.yml",
+      "mode": "0640",
+      "owner": "app",
+      "group": "app",
+      "type": "regular file"
+    },
+    {
+      "path": "/usr/local/bin/deploy-helper",
+      "mode": "0755",
+      "owner": "root",
+      "group": "root",
+      "type": "regular file"
+    },
+    {
+      "path": "/var/log/app/app.log",
+      "mode": "0640",
+      "owner": "app",
+      "group": "app",
+      "type": "regular file"
+    }
+  ],
+  "groups": [
+    {
+      "name": "app",
+      "gid": 2002,
+      "members": [
+        "app"
+      ]
+    },
+    {
+      "name": "deploy",
+      "gid": 2001,
+      "members": [
+        "alice",
+        "deploybot"
+      ]
+    },
+    {
+      "name": "root",
+      "gid": 0,
+      "members": []
+    },
+    {
+      "name": "sudo",
+      "gid": 27,
+      "members": [
+        "alice"
+      ]
+    }
+  ],
+  "sudoers": [
+    {
+      "subject": "%sudo",
+      "hosts": [
+        "ALL"
+      ],
+      "run_as": "ALL:ALL",
+      "tags": [],
+      "commands": [
+        "ALL"
+      ],
+      "raw": "%sudo ALL=(ALL:ALL) ALL"
+    },
+    {
+      "subject": "deploybot",
+      "hosts": [
+        "lab-host"
+      ],
+      "run_as": "root",
+      "tags": [
+        "NOPASSWD"
+      ],
+      "commands": [
+        "/usr/bin/systemctl restart app"
+      ],
+      "raw": "deploybot lab-host=(root) NOPASSWD: /usr/bin/systemctl restart app"
+    }
+  ]
+}
+
