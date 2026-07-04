@@ -9,6 +9,7 @@
 - which permission allowed access
 - which socket exposed a service
 - which log preserves the event
+- which scheduler caused an action to run
 
 This note maps low-level Linux concepts to the kind of evidence a defender or reviewer can inspect.
 
@@ -109,11 +110,31 @@ Security questions:
 - Did service start or failure logs line up with a new listening socket?
 - Is the raw log line preserved for reviewer traceability?
 
+## Scheduler
+
+Schedulers turn stored configuration into future process execution. Scheduler evidence helps distinguish an expected recurring task from an unexpected persistence or privilege path.
+
+Useful evidence:
+
+- scheduler type, such as a systemd timer or cron entry
+- unit, job, or configuration path
+- configured user and group
+- schedule expression or next-run time
+- command or service triggered
+- last-run status and timestamp when available
+
+Security questions:
+
+- Did a new or modified scheduled job appear?
+- Will the job execute as a more privileged identity than its owner expects?
+- Does the command path or triggered service match the host role?
+- Do process and log evidence confirm that the scheduled action ran as configured?
+
 ## Bridge pattern
 
 Use this chain when turning foundations knowledge into security evidence:
 
-1. Identify the low-level object: process, file, permission, socket, or log.
+1. Identify the low-level object: process, file, permission, socket, log, or scheduler.
 2. Normalize the state into a small stable record.
 3. Compare state over time when possible.
 4. Ask what changed and whether the change matches host intent.
