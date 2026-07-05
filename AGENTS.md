@@ -4,10 +4,12 @@
 
 This repository is a training ground for small, deterministic Linux/systems foundations mini-labs.
 
-Current stable mini-labs:
+Current mini-labs:
 
 - `projects/linux-auth-observe`: normalize saved Linux auth evidence, filter normalized JSONL, and generate Markdown summaries.
 - `projects/linux-socket-observe`: normalize saved Linux networking state snapshots and generate Markdown diffs.
+- `projects/linux-permission-observe`: normalize saved Linux permission state and report permission drift.
+- `projects/linux-process-observe`: normalize saved procfs process identity, link saved socket context, and report diffs.
 
 Keep each lab narrow, local-file-based, reviewable, and easy to validate with sanitized fixtures and pytest.
 
@@ -16,6 +18,8 @@ Keep each lab narrow, local-file-based, reviewable, and easy to validate with sa
 - Keep changes scoped to the active mini-lab and directly related docs:
   - `projects/linux-auth-observe/**`
   - `projects/linux-socket-observe/**`
+  - `projects/linux-permission-observe/**`
+  - `projects/linux-process-observe/**`
   - `notes/**`
   - `docs/**`
   - `.codex/**`
@@ -41,6 +45,19 @@ Keep each lab narrow, local-file-based, reviewable, and easy to validate with sa
 - Do not add pcap parsing, live capture, raw sockets, packet sockets, network namespaces, or `ip monitor`.
 - Treat snapshots as saved command-output artifacts, not live telemetry.
 
+### linux-permission-observe
+
+- Supported inputs: saved file inventory TSV, sanitized group records, and sanitized sudoers rules.
+- Do not crawl the live filesystem or parse sudoers include trees.
+- Treat snapshots as permission evidence, not policy or privilege-escalation verdicts.
+
+### linux-process-observe
+
+- Supported inputs: saved procfs PID directories (`status`, `stat`, `cmdline`, `exe`) and saved TCP/UDP `ss -H -a -n -t -u -p` text.
+- Do not add live procfs crawling, `/proc/net/tcp` parsing, eBPF, netlink subscriptions, process control, or EDR agent behavior.
+- Treat executable paths and `ss` process context as contextual evidence, not authoritative integrity or attribution proof.
+- Keep the `stacknil.system-evidence.v1` envelope deterministic and backward compatible.
+
 ## Engineering style
 
 - Prefer Python stdlib where reasonable.
@@ -61,3 +78,4 @@ Keep each lab narrow, local-file-based, reviewable, and easy to validate with sa
 - Latest stable release: `v0.2.0`
 - `v0.1.0`: first credible mini-lab, centered on `linux-auth-observe`
 - `v0.2.0`: second credible mini-lab, adding `linux-socket-observe`
+- Unreleased: `linux-permission-observe`, the 408-to-security bridge, and `linux-process-observe`

@@ -1,0 +1,87 @@
+{
+  "schema": "stacknil.system-evidence.v1",
+  "source": "procfs",
+  "host_id": "lab-host",
+  "observed_at": "2026-07-05T00:05:00Z",
+  "records": [
+    {
+      "record_type": "process",
+      "process_id": "lab-host:1:100",
+      "pid": 1,
+      "ppid": 0,
+      "parent_process_id": null,
+      "name": "systemd",
+      "state": "S",
+      "uid": 0,
+      "effective_uid": 0,
+      "gid": 0,
+      "effective_gid": 0,
+      "executable": "/usr/lib/systemd/systemd",
+      "argv": [
+        "/usr/lib/systemd/systemd",
+        "--system"
+      ],
+      "start_time_ticks": 100
+    },
+    {
+      "record_type": "process",
+      "process_id": "lab-host:120:1200",
+      "pid": 120,
+      "ppid": 1,
+      "parent_process_id": "lab-host:1:100",
+      "name": "sshd",
+      "state": "S",
+      "uid": 0,
+      "effective_uid": 0,
+      "gid": 0,
+      "effective_gid": 0,
+      "executable": "/usr/sbin/sshd",
+      "argv": [
+        "/usr/sbin/sshd",
+        "-D"
+      ],
+      "start_time_ticks": 1200
+    },
+    {
+      "record_type": "process",
+      "process_id": "lab-host:230:2300",
+      "pid": 230,
+      "ppid": 1,
+      "parent_process_id": "lab-host:1:100",
+      "name": "sh",
+      "state": "S",
+      "uid": 1001,
+      "effective_uid": 1001,
+      "gid": 1001,
+      "effective_gid": 1001,
+      "executable": "/usr/bin/dash",
+      "argv": [
+        "/usr/bin/dash",
+        "-c",
+        "sleep 30"
+      ],
+      "start_time_ticks": 2300
+    },
+    {
+      "record_type": "process",
+      "process_id": "lab-host:330:3300",
+      "pid": 330,
+      "ppid": 1,
+      "parent_process_id": "lab-host:1:100",
+      "name": "python3",
+      "state": "S",
+      "uid": 1001,
+      "effective_uid": 1001,
+      "gid": 1001,
+      "effective_gid": 1001,
+      "executable": "/usr/bin/python3.11",
+      "argv": [
+        "/usr/bin/python3.11",
+        "-m",
+        "http.server",
+        "8080"
+      ],
+      "start_time_ticks": 3300
+    }
+  ]
+}

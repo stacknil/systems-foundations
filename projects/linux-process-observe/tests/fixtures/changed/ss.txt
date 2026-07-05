@@ -1,0 +1,5 @@
+Netid State  Recv-Q Send-Q Local Address:Port Peer Address:Port Process
+tcp   ESTAB  0      0      192.0.2.10:22     198.51.100.21:51000 users:(("sshd",pid=120,fd=4))
+tcp   LISTEN 0      128    0.0.0.0:22        0.0.0.0:*             users:(("sshd",pid=120,fd=3))
+tcp   LISTEN 0      128    0.0.0.0:8080      0.0.0.0:*             users:(("python3",pid=330,fd=8))
+udp   UNCONN 0      0      0.0.0.0:68        0.0.0.0:*
