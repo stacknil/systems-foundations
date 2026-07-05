@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Added `projects/linux-permission-observe` for deterministic file mode/ownership, group, and sudoers drift evidence.
+- Added `notes/408-to-linux-security.md` to map operating-system concepts to security evidence.
+- Added `projects/linux-process-observe` for saved procfs identity, process/socket linking, normalized diffs, and Markdown reports.
+- Added the `stacknil.system-evidence.v1` envelope contract for process evidence artifacts.
+- Added `notes/process-evidence-schema.md` to document process identity and evidence caveats.
 - Added `docs/reviewer-brief.md` as a short external-review entry point.
 - Added `notes/network-state-to-detection-thinking.md` to connect socket state diffs with detection review questions.
 - Added repository-level docs and notes index pages.
@@ -14,6 +19,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Expanded repository navigation and validation commands for the permission and process mini-labs while keeping `v0.2.0` as the latest stable release.
+- Updated repository agent guidance with permission/process input boundaries and explicit non-goals.
 - Added changelog and docs-directory links to the root README and docs index.
 - Added local validation commands to the root README.
 - Updated the root README with a reviewer brief link.

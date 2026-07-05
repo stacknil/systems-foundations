@@ -1,0 +1,236 @@
+{
+  "schema": "stacknil.system-evidence.v1",
+  "source": "procfs+ss",
+  "host_id": "lab-host",
+  "observed_at": "2026-07-05T00:05:00Z",
+  "records": [
+    {
+      "record_type": "process_change",
+      "change_type": "added",
+      "identity": "lab-host:330:3300",
+      "before": null,
+      "after": {
+        "record_type": "process",
+        "process_id": "lab-host:330:3300",
+        "pid": 330,
+        "ppid": 1,
+        "parent_process_id": "lab-host:1:100",
+        "name": "python3",
+        "state": "S",
+        "uid": 1001,
+        "effective_uid": 1001,
+        "gid": 1001,
+        "effective_gid": 1001,
+        "executable": "/usr/bin/python3.11",
+        "argv": [
+          "/usr/bin/python3.11",
+          "-m",
+          "http.server",
+          "8080"
+        ],
+        "start_time_ticks": 3300
+      },
+      "changes": {}
+    },
+    {
+      "record_type": "process_change",
+      "change_type": "removed",
+      "identity": "lab-host:220:2200",
+      "before": {
+        "record_type": "process",
+        "process_id": "lab-host:220:2200",
+        "pid": 220,
+        "ppid": 1,
+        "parent_process_id": "lab-host:1:100",
+        "name": "app-worker",
+        "state": "S",
+        "uid": 1001,
+        "effective_uid": 1001,
+        "gid": 1001,
+        "effective_gid": 1001,
+        "executable": "/opt/example/bin/app-worker",
+        "argv": [
+          "/opt/example/bin/app-worker",
+          "--config",
+          "/etc/example/app.conf"
+        ],
+        "start_time_ticks": 2200
+      },
+      "after": null,
+      "changes": {}
+    },
+    {
+      "record_type": "process_change",
+      "change_type": "modified",
+      "identity": "lab-host:230:2300",
+      "before": {
+        "record_type": "process",
+        "process_id": "lab-host:230:2300",
+        "pid": 230,
+        "ppid": 1,
+        "parent_process_id": "lab-host:1:100",
+        "name": "task-runner",
+        "state": "S",
+        "uid": 1001,
+        "effective_uid": 1001,
+        "gid": 1001,
+        "effective_gid": 1001,
+        "executable": "/opt/example/bin/task-runner",
+        "argv": [
+          "/opt/example/bin/task-runner",
+          "--once"
+        ],
+        "start_time_ticks": 2300
+      },
+      "after": {
+        "record_type": "process",
+        "process_id": "lab-host:230:2300",
+        "pid": 230,
+        "ppid": 1,
+        "parent_process_id": "lab-host:1:100",
+        "name": "sh",
+        "state": "S",
+        "uid": 1001,
+        "effective_uid": 1001,
+        "gid": 1001,
+        "effective_gid": 1001,
+        "executable": "/usr/bin/dash",
+        "argv": [
+          "/usr/bin/dash",
+          "-c",
+          "sleep 30"
+        ],
+        "start_time_ticks": 2300
+      },
+      "changes": {
+        "argv": {
+          "before": [
+            "/opt/example/bin/task-runner",
+            "--once"
+          ],
+          "after": [
+            "/usr/bin/dash",
+            "-c",
+            "sleep 30"
+          ]
+        },
+        "executable": {
+          "before": "/opt/example/bin/task-runner",
+          "after": "/usr/bin/dash"
+        },
+        "name": {
+          "before": "task-runner",
+          "after": "sh"
+        }
+      }
+    },
+    {
+      "record_type": "process_socket_link_change",
+      "change_type": "added",
+      "identity": "lab-host:120:1200|tcp|ESTAB|192.0.2.10:22|198.51.100.21:51000",
+      "before": null,
+      "after": {
+        "record_type": "process_socket_link",
+        "linked": true,
+        "process_id": "lab-host:120:1200",
+        "pid": 120,
+        "process_name": "sshd",
+        "executable": "/usr/sbin/sshd",
+        "uid": 0,
+        "gid": 0,
+        "protocol": "tcp",
+        "state": "ESTAB",
+        "socket_role": "connection",
+        "exposure": "specific",
+        "recv_q": 0,
+        "send_q": 0,
+        "local_address": "192.0.2.10",
+        "local_port": 22,
+        "remote_address": "198.51.100.21",
+        "remote_port": 51000
+      },
+      "changes": {}
+    },
+    {
+      "record_type": "process_socket_link_change",
+      "change_type": "added",
+      "identity": "lab-host:330:3300|tcp|LISTEN|0.0.0.0:8080|0.0.0.0:*",
+      "before": null,
+      "after": {
+        "record_type": "process_socket_link",
+        "linked": true,
+        "process_id": "lab-host:330:3300",
+        "pid": 330,
+        "process_name": "python3",
+        "executable": "/usr/bin/python3.11",
+        "uid": 1001,
+        "gid": 1001,
+        "protocol": "tcp",
+        "state": "LISTEN",
+        "socket_role": "listener",
+        "exposure": "wildcard",
+        "recv_q": 0,
+        "send_q": 128,
+        "local_address": "0.0.0.0",
+        "local_port": 8080,
+        "remote_address": "0.0.0.0",
+        "remote_port": "*"
+      },
+      "changes": {}
+    },
+    {
+      "record_type": "process_socket_link_change",
+      "change_type": "removed",
+      "identity": "lab-host:120:1200|tcp|ESTAB|192.0.2.10:22|198.51.100.20:50000",
+      "before": {
+        "record_type": "process_socket_link",
+        "linked": true,
+        "process_id": "lab-host:120:1200",
+        "pid": 120,
+        "process_name": "sshd",
+        "executable": "/usr/sbin/sshd",
+        "uid": 0,
+        "gid": 0,
+        "protocol": "tcp",
+        "state": "ESTAB",
+        "socket_role": "connection",
+        "exposure": "specific",
+        "recv_q": 0,
+        "send_q": 0,
+        "local_address": "192.0.2.10",
+        "local_port": 22,
+        "remote_address": "198.51.100.20",
+        "remote_port": 50000
+      },
+      "after": null,
+      "changes": {}
+    },
+    {
+      "record_type": "process_socket_link_change",
+      "change_type": "removed",
+      "identity": "lab-host:220:2200|tcp|LISTEN|127.0.0.1:9000|0.0.0.0:*",
+      "before": {
+        "record_type": "process_socket_link",
+        "linked": true,
+        "process_id": "lab-host:220:2200",
+        "pid": 220,
+        "process_name": "app-worker",
+        "executable": "/opt/example/bin/app-worker",
+        "uid": 1001,
+        "gid": 1001,
+        "protocol": "tcp",
+        "state": "LISTEN",
+        "socket_role": "listener",
+        "exposure": "loopback",
+        "recv_q": 0,
+        "send_q": 64,
+        "local_address": "127.0.0.1",
+        "local_port": 9000,
+        "remote_address": "0.0.0.0",
+        "remote_port": "*"
+      },
+      "after": null,
+      "changes": {}
+    }
+  ]
+}
