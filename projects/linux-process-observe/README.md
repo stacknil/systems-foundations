@@ -82,7 +82,7 @@ python -m linux_process_observe adapt \
   --output output/diff/telemetry_events.jsonl
 ```
 
-The adapter output has the required `timestamp`, `event_type`, `source`, `target`, and `status` fields. A process change maps to `process_added`, `process_removed`, or `process_modified`; a process/socket link change maps to `socket_link_added` or `socket_link_removed`. The process ID is the event source, the executable or endpoint is the target, and the diff change type is the status. Each row also keeps deterministic evidence metadata for traceability.
+The adapter output has the required `timestamp`, `event_type`, `source`, `target`, and `status` fields. A process change maps to `process_added`, `process_removed`, or `process_modified`; a process/socket link change maps to `socket_link_added` or `socket_link_removed`. The process ID is the event source, the executable or endpoint is the target, and the diff change type is the status. Each row also keeps deterministic evidence metadata for traceability. `metadata.time_semantics` is `snapshot_diff_observed_at`: `timestamp` is when the snapshot comparison was observed, not an inferred process or socket occurrence time.
 
 The JSONL can be supplied as `input_path` to telemetry-lab's existing `run window` configuration to produce its normal window features, alerts, summary, and run manifest. telemetry-lab's demo-specific deduplication and investigation workflows remain in that repository; this lab does not add a second copy of those commands or a fifth mini-lab.
 

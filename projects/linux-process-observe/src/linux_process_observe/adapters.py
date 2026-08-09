@@ -12,6 +12,7 @@ _EVENT_TYPES = {
     "process_change": "process",
     "process_socket_link_change": "socket_link",
 }
+_TIME_SEMANTICS = "snapshot_diff_observed_at"
 _SOCKET_FIELDS = (
     "protocol",
     "state",
@@ -95,6 +96,7 @@ def _map_record(
             "process_id": selected.get("process_id"),
             "record_index": index,
             "record_type": record_type,
+            "time_semantics": _TIME_SEMANTICS,
             "changes": changes,
         },
     }

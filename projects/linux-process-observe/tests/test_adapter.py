@@ -29,6 +29,10 @@ def test_process_diff_maps_to_stable_telemetry_events() -> None:
         "target",
         "status",
     } <= actual[0].keys()
+    assert {event["metadata"]["time_semantics"] for event in actual} == {
+        "snapshot_diff_observed_at"
+    }
+    assert {event["timestamp"] for event in actual} == {diff.observed_at}
 
 
 def test_adapter_uses_pid_fallback_for_unlinked_socket_context() -> None:

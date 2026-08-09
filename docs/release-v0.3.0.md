@@ -36,8 +36,15 @@ The adapter reads an existing `process_diff.json` and writes one JSON object per
 | `process_id` | `source` |
 | executable or formatted socket endpoint | `target` |
 | `added/removed/modified` | `status` |
+| snapshot comparison observation semantics | `metadata.time_semantics=snapshot_diff_observed_at` |
 
 Each event includes deterministic metadata with the evidence schema, source, host, record type, identity, record index, and field changes. An unlinked socket uses a deterministic `host_id:pid:<pid>` source fallback when a PID is available.
+
+`metadata.time_semantics` is `snapshot_diff_observed_at`. The event `timestamp`
+is the diff observation time, not an inferred process-start, process-exit, or
+socket-occurrence time. A window containing several adapter rows therefore
+represents evidence deltas observed in one snapshot comparison; it does not
+prove that those system activities happened together.
 
 Run the bridge with:
 
