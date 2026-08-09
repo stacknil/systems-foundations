@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - Introduced `projects/linux-process-observe` for saved procfs identity, process/socket linking, normalized diffs, and Markdown reports.
 - Added the `stacknil.system-evidence.v1` envelope contract for process evidence artifacts.
 - Added a process-diff adapter that emits telemetry-lab-compatible JSONL with stable evidence metadata.
+- Added `stacknil.system-evidence.telemetry.v1` to identify the adapter mapping contract separately from the source evidence contract.
 - Added adapter golden regression, malformed input, PID fallback, and CLI coverage.
 
 ### Documentation

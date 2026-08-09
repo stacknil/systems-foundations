@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from linux_process_observe.adapters import build_telemetry_events
+from linux_process_observe.adapters import ADAPTER_CONTRACT, build_telemetry_events
 from linux_process_observe.cli import main
 from linux_process_observe.models import EvidenceEnvelope
 from linux_process_observe.snapshot import load_envelope
@@ -31,6 +31,9 @@ def test_process_diff_maps_to_stable_telemetry_events() -> None:
     } <= actual[0].keys()
     assert {event["metadata"]["time_semantics"] for event in actual} == {
         "snapshot_diff_observed_at"
+    }
+    assert {event["metadata"]["adapter_contract"] for event in actual} == {
+        ADAPTER_CONTRACT
     }
     assert {event["timestamp"] for event in actual} == {diff.observed_at}
 

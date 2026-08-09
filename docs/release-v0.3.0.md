@@ -37,8 +37,9 @@ The adapter reads an existing `process_diff.json` and writes one JSON object per
 | executable or formatted socket endpoint | `target` |
 | `added/removed/modified` | `status` |
 | snapshot comparison observation semantics | `metadata.time_semantics=snapshot_diff_observed_at` |
+| adapter mapping contract | `metadata.adapter_contract=stacknil.system-evidence.telemetry.v1` |
 
-Each event includes deterministic metadata with the evidence schema, source, host, record type, identity, record index, and field changes. An unlinked socket uses a deterministic `host_id:pid:<pid>` source fallback when a PID is available.
+Each event includes deterministic metadata with the source evidence schema and the versioned adapter mapping contract, plus source, host, record type, identity, record index, and field changes. An unlinked socket uses a deterministic `host_id:pid:<pid>` source fallback when a PID is available.
 
 `metadata.time_semantics` is `snapshot_diff_observed_at`. The event `timestamp`
 is the diff observation time, not an inferred process-start, process-exit, or

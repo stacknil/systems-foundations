@@ -12,6 +12,7 @@ _EVENT_TYPES = {
     "process_change": "process",
     "process_socket_link_change": "socket_link",
 }
+ADAPTER_CONTRACT = "stacknil.system-evidence.telemetry.v1"
 _TIME_SEMANTICS = "snapshot_diff_observed_at"
 _SOCKET_FIELDS = (
     "protocol",
@@ -88,6 +89,7 @@ def _map_record(
         "target": target,
         "status": change_type,
         "metadata": {
+            "adapter_contract": ADAPTER_CONTRACT,
             "change_type": change_type,
             "evidence_schema": diff.schema,
             "evidence_source": diff.source,
