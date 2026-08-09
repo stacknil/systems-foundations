@@ -5,6 +5,7 @@ from collections.abc import Callable
 from pathlib import Path
 import sys
 
+from .adapters import build_telemetry_events, write_telemetry_events
 from .diff import build_diff_envelope
 from .report import build_markdown_report
 from .snapshot import EvidenceInputError, build_snapshot_artifacts, load_envelope, write_envelope
@@ -29,6 +30,14 @@ def build_parser() -> ArgumentParser:
     diff_parser.add_argument("--after-links", required=True, help="later process_socket_links.json")
     diff_parser.add_argument("--output-dir", required=True, help="directory for process_diff.json and report.md")
     diff_parser.set_defaults(handler=_handle_diff)
+
+    adapt_parser = subparsers.add_parser(
+        "adapt",
+        help="map process_diff.json to telemetry-lab-compatible JSONL events",
+    )
+    adapt_parser.add_argument("--input", required=True, help="process_diff.json")
+    adapt_parser.add_argument("--output", required=True, help="output telemetry JSONL path")
+    adapt_parser.set_defaults(handler=_handle_adapt)
     return parser
 
 
@@ -84,6 +93,36 @@ def _handle_diff(args: Namespace) -> int:
     write_envelope(diff, output_dir / "process_diff.json")
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "report.md").write_text(build_markdown_report(diff), encoding="utf-8", newline="\n")
+    return 0
+
+
+def _handle_adapt(args: Namespace) -> int:
+    try:
+        diff = load_envelope(args.input, input_name="process-diff")
+        events = build_telemetry_events(diff)
+        write_telemetry_events(events, args.output)
+    except EvidenceInputError as exc:
+        _print_error("adapt", exc)
+        return 1
+    except OSError as exc:
+        _print_error(
+            "adapt",
+            EvidenceInputError("output", str(args.output), exc.__class__.__name__, str(exc)),
+        )
+        return 1
+    except ValueError as exc:
+        _print_error(
+            "adapt",
+            EvidenceInputError(
+                "process-diff",
+                str(args.input),
+                exc.__class__.__name__,
+                str(exc),
+            ),
+        )
+        return 1
+
+    print(f"adapt wrote {len(events)} telemetry events", file=sys.stderr)
     return 0
 
 
