@@ -33,7 +33,7 @@ proc/
 | `report.md` | Reviewer-friendly Markdown summary of the normalized diff |
 | `telemetry_events.jsonl` | telemetry-lab-compatible events adapted from `process_diff.json` |
 
-All JSON artifacts use the same envelope:
+The three system-evidence `.json` artifacts use the same envelope:
 
 ```json
 {

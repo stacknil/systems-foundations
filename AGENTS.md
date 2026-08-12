@@ -23,6 +23,7 @@ Keep each lab narrow, local-file-based, reviewable, and easy to validate with sa
   - `notes/**`
   - `docs/**`
   - `.codex/**`
+  - `.github/workflows/**` for minimal repository CI
   - root `README.md`, `CHANGELOG.md`, `.gitignore`, and `AGENTS.md` when needed for repository coordination
 - Do not create unrelated projects.
 - Do not introduce network services, web UI, cloud dependencies, databases, or storage backends.
