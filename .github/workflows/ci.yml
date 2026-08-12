@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  mini-labs:
+    name: Mini-labs (Python 3.11)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Test linux-auth-observe
+        working-directory: projects/linux-auth-observe
+        run: |
+          python -m pip install -e ".[dev]"
+          python -m pytest -q
+
+      - name: Test linux-socket-observe
+        working-directory: projects/linux-socket-observe
+        run: |
+          python -m pip install -e ".[dev]"
+          python -m pytest -q
+
+      - name: Test linux-permission-observe
+        working-directory: projects/linux-permission-observe
+        run: |
+          python -m pip install -e ".[dev]"
+          python -m pytest -q
+
+      - name: Test linux-process-observe
+        working-directory: projects/linux-process-observe
+        run: |
+          python -m pip install -e ".[dev]"
+          python -m pytest -q
