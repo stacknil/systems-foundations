@@ -13,6 +13,7 @@ jobs:
   mini-labs:
     name: Mini-labs (Python 3.11)
     runs-on: ubuntu-22.04
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
