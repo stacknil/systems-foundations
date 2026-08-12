@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-## [v0.3.0] - 2026-08-09
+## [v0.3.0] - 2026-08-12
 
 408-to-Security Bridge
 
