@@ -100,15 +100,8 @@ def _handle_adapt(args: Namespace) -> int:
     try:
         diff = load_envelope(args.input, input_name="process-diff")
         events = build_telemetry_events(diff)
-        write_telemetry_events(events, args.output)
     except EvidenceInputError as exc:
         _print_error("adapt", exc)
-        return 1
-    except OSError as exc:
-        _print_error(
-            "adapt",
-            EvidenceInputError("output", str(args.output), exc.__class__.__name__, str(exc)),
-        )
         return 1
     except ValueError as exc:
         _print_error(
@@ -119,6 +112,15 @@ def _handle_adapt(args: Namespace) -> int:
                 exc.__class__.__name__,
                 str(exc),
             ),
+        )
+        return 1
+
+    try:
+        write_telemetry_events(events, args.output)
+    except (OSError, ValueError) as exc:
+        _print_error(
+            "adapt",
+            EvidenceInputError("output", str(args.output), exc.__class__.__name__, str(exc)),
         )
         return 1
 

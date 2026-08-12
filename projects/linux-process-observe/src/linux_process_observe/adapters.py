@@ -7,10 +7,17 @@ import json
 from .models import EVIDENCE_SCHEMA, EvidenceEnvelope
 
 
-_CHANGE_TYPES = frozenset(("added", "removed", "modified"))
 _EVENT_TYPES = {
     "process_change": "process",
     "process_socket_link_change": "socket_link",
+}
+_CHANGE_TYPES = {
+    "process_change": frozenset(("added", "removed", "modified")),
+    "process_socket_link_change": frozenset(("added", "removed")),
+}
+_INNER_RECORD_TYPES = {
+    "process_change": "process",
+    "process_socket_link_change": "process_socket_link",
 }
 ADAPTER_CONTRACT = "stacknil.system-evidence.telemetry.v1"
 _TIME_SEMANTICS = "snapshot_diff_observed_at"
@@ -67,17 +74,29 @@ def _map_record(
         raise ValueError(f"record {index} has unsupported record_type={record_type}")
 
     change_type = _required_string(record, "change_type", index)
-    if change_type not in _CHANGE_TYPES:
-        raise ValueError(f"record {index} has unsupported change_type={change_type}")
+    if change_type not in _CHANGE_TYPES[record_type]:
+        raise ValueError(
+            f"record {index} has unsupported change_type={change_type} "
+            f"for record_type={record_type}"
+        )
 
     identity = _required_string(record, "identity", index)
-    selected = _selected_record(record, change_type, index)
+    before, after, selected = _change_records(
+        record,
+        change_type,
+        index,
+        expected_record_type=_INNER_RECORD_TYPES[record_type],
+    )
     if event_prefix == "process":
+        for process_record in (before, after):
+            if process_record is not None:
+                _validate_process_identity(process_record, identity, index)
+        source = _required_string(selected, "process_id", index)
         target = _required_string(selected, "executable", index)
     else:
+        source = _socket_source(diff.host_id, selected, index)
         target = _socket_target(selected, index)
 
-    source = _source_value(diff.host_id, selected)
     changes = record.get("changes", {})
     if not isinstance(changes, dict):
         raise ValueError(f"record {index} changes must be an object")
@@ -104,22 +123,67 @@ def _map_record(
     }
 
 
-def _selected_record(
+def _change_records(
     record: dict[str, Any],
     change_type: str,
     index: int,
-) -> dict[str, Any]:
-    key = "before" if change_type == "removed" else "after"
-    selected = record.get(key)
-    if not isinstance(selected, dict):
-        raise ValueError(f"record {index} {change_type} change requires an object in {key}")
-    return selected
+    *,
+    expected_record_type: str,
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None, dict[str, Any]]:
+    if "before" not in record or "after" not in record:
+        raise ValueError(f"record {index} must contain before and after")
+
+    before = record["before"]
+    after = record["after"]
+    if change_type == "added":
+        if before is not None or not isinstance(after, dict):
+            raise ValueError(
+                f"record {index} added change requires before=null and after=object"
+            )
+        selected = after
+    elif change_type == "removed":
+        if not isinstance(before, dict) or after is not None:
+            raise ValueError(
+                f"record {index} removed change requires before=object and after=null"
+            )
+        selected = before
+    else:
+        if not isinstance(before, dict) or not isinstance(after, dict):
+            raise ValueError(
+                f"record {index} modified change requires before=object and after=object"
+            )
+        selected = after
+
+    for change_record in (before, after):
+        if change_record is None:
+            continue
+        inner_type = _required_string(change_record, "record_type", index)
+        if inner_type != expected_record_type:
+            raise ValueError(
+                f"record {index} inner record_type must be {expected_record_type}"
+            )
+    return before, after, selected
 
 
-def _source_value(host_id: str, record: dict[str, Any]) -> str:
+def _validate_process_identity(
+    record: dict[str, Any], identity: str, index: int
+) -> None:
+    process_id = _required_string(record, "process_id", index)
+    if process_id != identity:
+        raise ValueError(f"record {index} process_id must match identity")
+
+
+def _socket_source(host_id: str, record: dict[str, Any], index: int) -> str:
     process_id = record.get("process_id")
-    if isinstance(process_id, str) and process_id.strip():
-        return process_id
+    linked = record.get("linked")
+    if linked is True:
+        if not isinstance(process_id, str) or not process_id.strip():
+            raise ValueError(f"record {index} linked socket requires process_id")
+        return process_id.strip()
+    if linked is not False:
+        raise ValueError(f"record {index} socket linked must be boolean")
+    if process_id is not None:
+        raise ValueError(f"record {index} unlinked socket process_id must be null")
 
     pid = record.get("pid")
     if isinstance(pid, int) and not isinstance(pid, bool):
