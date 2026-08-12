@@ -10,11 +10,11 @@ The goal is to keep each lab narrow, deterministic, and easy to inspect end to e
 
 - [`projects/linux-auth-observe`](projects/linux-auth-observe/README.md): Linux auth evidence mini-lab for exported journald JSON lines and distro auth syslog files. This was the first stable mini-lab in `v0.1.0`.
 - [`projects/linux-socket-observe`](projects/linux-socket-observe/README.md): local Linux networking state mini-lab for `ss` plus selected `iproute2` snapshots. It builds one normalized snapshot artifact and generates a Markdown diff between two snapshots.
-- [`projects/linux-permission-observe`](projects/linux-permission-observe/README.md): saved Linux permission state mini-lab for file ownership/mode, group membership, and sudoers drift. This work is currently unreleased.
-- [`projects/linux-process-observe`](projects/linux-process-observe/README.md): saved procfs identity and `ss` context mini-lab that links processes to listening sockets and network endpoints. This work is currently unreleased.
+- [`projects/linux-permission-observe`](projects/linux-permission-observe/README.md): saved Linux permission state mini-lab for file ownership/mode, group membership, and sudoers drift. Released in `v0.3.0`.
+- [`projects/linux-process-observe`](projects/linux-process-observe/README.md): saved procfs identity and `ss` context mini-lab that links processes to listening sockets and network endpoints. It also adapts process diffs into telemetry-lab-compatible JSONL without adding another mini-lab. Released in `v0.3.0`.
 
-Latest stable release: [v0.2.0](https://github.com/stacknil/systems-foundations/releases/latest)
-Latest release notes: [v0.2.0](docs/release-v0.2.0.md)
+Latest stable release: [v0.3.0](https://github.com/stacknil/systems-foundations/releases/latest)
+Latest release notes: [v0.3.0](docs/release-v0.3.0.md)
 Changelog: [CHANGELOG.md](CHANGELOG.md)
 Docs index: [docs/README.md](docs/README.md)
 Reviewer brief: [docs/reviewer-brief.md](docs/reviewer-brief.md)
@@ -44,6 +44,8 @@ python -m pytest -q
 cd ../linux-process-observe
 python -m pytest -q
 ```
+
+The process lab's optional cross-repository bridge is local-file based: `process_diff.json` -> `telemetry_events.jsonl` -> telemetry-lab's existing event/window workflow.
 
 ## Repository Shape
 

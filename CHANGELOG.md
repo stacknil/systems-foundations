@@ -6,30 +6,29 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Added `projects/linux-permission-observe` for deterministic file mode/ownership, group, and sudoers drift evidence.
-- Added `notes/408-to-linux-security.md` to map operating-system concepts to security evidence.
-- Added `projects/linux-process-observe` for saved procfs identity, process/socket linking, normalized diffs, and Markdown reports.
-- Added the `stacknil.system-evidence.v1` envelope contract for process evidence artifacts.
-- Added `notes/process-evidence-schema.md` to document process identity and evidence caveats.
-- Added `docs/reviewer-brief.md` as a short external-review entry point.
-- Added `notes/network-state-to-detection-thinking.md` to connect socket state diffs with detection review questions.
-- Added repository-level docs and notes index pages.
-- Added related-notes links from each mini-lab README to its supporting notes.
-- Added `.gitignore` rules for local Python test artifacts and generated mini-lab output files.
-
 ### Changed
-
-- Expanded repository navigation and validation commands for the permission and process mini-labs while keeping `v0.2.0` as the latest stable release.
-- Updated repository agent guidance with permission/process input boundaries and explicit non-goals.
-- Added changelog and docs-directory links to the root README and docs index.
-- Added local validation commands to the root README.
-- Updated the root README with a reviewer brief link.
-- Updated repository agent guidance to reflect the current two-mini-lab scope and boundaries.
 
 ### Fixed
 
-- Tightened reviewer brief wording to avoid implying CI coverage where only local pytest coverage is currently documented.
-- Made the reviewer brief quick-run path separator platform-neutral.
+## [v0.3.0] - 2026-08-12
+
+408-to-Security Bridge
+
+### Added
+
+- Introduced `projects/linux-permission-observe` for deterministic file mode/ownership, group, and sudoers drift evidence.
+- Added `notes/408-to-linux-security.md` to map operating-system concepts to security evidence.
+- Introduced `projects/linux-process-observe` for saved procfs identity, process/socket linking, normalized diffs, and Markdown reports.
+- Added the `stacknil.system-evidence.v1` envelope contract for process evidence artifacts.
+- Added a process-diff adapter that emits telemetry-lab-compatible JSONL with stable evidence metadata.
+- Added `stacknil.system-evidence.telemetry.v1` to identify the adapter mapping contract separately from the source evidence contract.
+- Added adapter golden regression, malformed input, PID fallback, and CLI coverage.
+
+### Documentation
+
+- Added `notes/process-evidence-schema.md` and the v0.3.0 release notes.
+- Updated repository navigation and reviewer guidance for four stable mini-labs.
+- Documented the process diff -> telemetry-lab JSONL bridge without adding a fifth mini-lab.
 
 ## [v0.2.0] - 2026-05-20
 
@@ -67,6 +66,7 @@ First Credible Mini-Lab
 - Added release notes in `docs/release-v0.1.0.md`
 - Added root README release entry and latest release link
 
-[Unreleased]: https://github.com/stacknil/systems-foundations/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/stacknil/systems-foundations/compare/v0.3.0...HEAD
+[v0.3.0]: https://github.com/stacknil/systems-foundations/releases/tag/v0.3.0
 [v0.2.0]: https://github.com/stacknil/systems-foundations/releases/tag/v0.2.0
 [v0.1.0]: https://github.com/stacknil/systems-foundations/releases/tag/v0.1.0

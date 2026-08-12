@@ -31,8 +31,9 @@ proc/
 | `process_socket_links.json` | Listening sockets and network endpoints linked to process evidence when possible |
 | `process_diff.json` | Added, removed, or modified processes plus added or removed process/socket links |
 | `report.md` | Reviewer-friendly Markdown summary of the normalized diff |
+| `telemetry_events.jsonl` | telemetry-lab-compatible events adapted from `process_diff.json` |
 
-All JSON artifacts use the same envelope:
+The three system-evidence `.json` artifacts use the same envelope:
 
 ```json
 {
@@ -73,6 +74,18 @@ python -m linux_process_observe diff \
   --output-dir output/diff
 ```
 
+To bridge the diff into the existing telemetry-lab event contract:
+
+```bash
+python -m linux_process_observe adapt \
+  --input output/diff/process_diff.json \
+  --output output/diff/telemetry_events.jsonl
+```
+
+The adapter output has the required `timestamp`, `event_type`, `source`, `target`, and `status` fields. A process change maps to `process_added`, `process_removed`, or `process_modified`; a process/socket link change maps to `socket_link_added` or `socket_link_removed`. The process ID is the event source, the executable or endpoint is the target, and the diff change type is the status. Each row also keeps deterministic evidence metadata for traceability. `metadata.adapter_contract` is `stacknil.system-evidence.telemetry.v1`, separate from the source `metadata.evidence_schema`; `metadata.time_semantics` is `snapshot_diff_observed_at`: `timestamp` is when the snapshot comparison was observed, not an inferred process or socket occurrence time.
+
+The JSONL can be supplied as `input_path` to telemetry-lab's existing `run window` configuration to produce its normal window features, alerts, summary, and run manifest. telemetry-lab's demo-specific deduplication and investigation workflows remain in that repository; this lab does not add a second copy of those commands or a fifth mini-lab.
+
 ## Identity And Link Semantics
 
 - `process_id` is `host_id:pid:start_time_ticks`; PID alone is not treated as durable identity because Linux can reuse it.
@@ -85,6 +98,7 @@ python -m linux_process_observe diff \
 ## Validation Status
 
 Pytest covers procfs parsing, `ss` parsing, process identity, socket linking, malformed inputs, timezone normalization, golden artifacts, diffs, reports, and the CLI workflow.
+The adapter adds golden JSONL coverage, an unlinked-socket source fallback test, malformed diff coverage, and CLI error reporting coverage.
 
 ## Non-Goals
 
