@@ -66,6 +66,36 @@ def test_cli_reports_malformed_procfs_with_input_context(tmp_path: Path, capsys)
     assert not (tmp_path / "process_snapshot.json").exists()
 
 
+def test_cli_diff_rejects_reversed_snapshot_order(tmp_path: Path, capsys) -> None:
+    baseline_dir = tmp_path / "baseline"
+    changed_dir = tmp_path / "changed"
+    diff_dir = tmp_path / "diff"
+    assert _snapshot("baseline", "2026-07-05T00:10:00Z", baseline_dir) == 0
+    assert _snapshot("changed", "2026-07-05T00:05:00Z", changed_dir) == 0
+
+    exit_code = main(
+        [
+            "diff",
+            "--before-processes",
+            str(baseline_dir / "process_snapshot.json"),
+            "--after-processes",
+            str(changed_dir / "process_snapshot.json"),
+            "--before-links",
+            str(baseline_dir / "process_socket_links.json"),
+            "--after-links",
+            str(changed_dir / "process_socket_links.json"),
+            "--output-dir",
+            str(diff_dir),
+        ]
+    )
+    captured = capsys.readouterr()
+
+    assert exit_code == 1
+    assert "error command=diff input=artifacts" in captured.err
+    assert "before observed_at must be earlier than after observed_at" in captured.err
+    assert not diff_dir.exists()
+
+
 def _snapshot(name: str, observed_at: str, output_dir: Path) -> int:
     return main(
         [
