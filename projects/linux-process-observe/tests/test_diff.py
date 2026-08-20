@@ -141,6 +141,23 @@ def test_diff_accepts_strictly_ordered_subsecond_snapshots() -> None:
     assert diff.observed_at == "2026-07-05T00:00:00.200000Z"
 
 
+def test_diff_rejects_observation_times_beyond_microsecond_precision() -> None:
+    before_processes, before_links = _build("baseline", "2026-07-05T00:00:00Z")
+    after_processes, after_links = _build("changed", "2026-07-05T00:05:00Z")
+    before_processes = _with_observed_at(before_processes, "2026-07-05T00:00:00.1234561Z")
+    before_links = _with_observed_at(before_links, "2026-07-05T00:00:00.1234561Z")
+    after_processes = _with_observed_at(after_processes, "2026-07-05T00:00:00.1234569Z")
+    after_links = _with_observed_at(after_links, "2026-07-05T00:00:00.1234569Z")
+
+    with pytest.raises(ValueError, match="observed_at supports at most 6 fractional second digits"):
+        build_diff_envelope(
+            before_processes=before_processes,
+            after_processes=after_processes,
+            before_links=before_links,
+            after_links=after_links,
+        )
+
+
 def _build(name: str, observed_at: str) -> tuple[EvidenceEnvelope, EvidenceEnvelope]:
     return build_snapshot_artifacts(
         proc_root=FIXTURES / name / "proc",

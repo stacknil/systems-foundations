@@ -59,6 +59,16 @@ def test_snapshot_preserves_subsecond_observation_time() -> None:
     assert links.observed_at == "2026-07-05T00:00:00.123456Z"
 
 
+def test_snapshot_rejects_observation_time_beyond_microsecond_precision() -> None:
+    with pytest.raises(EvidenceInputError, match="observed_at supports at most 6 fractional second digits"):
+        build_snapshot_artifacts(
+            proc_root=FIXTURES / "baseline" / "proc",
+            ss_path=FIXTURES / "baseline" / "ss.txt",
+            host_id="lab-host",
+            observed_at="2026-07-05T00:00:00.1234567Z",
+        )
+
+
 def test_loaded_envelope_requires_timezone_aware_observation_time() -> None:
     with pytest.raises(ValueError, match="observed_at must include a timezone"):
         EvidenceEnvelope.from_mapping(
