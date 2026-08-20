@@ -29,7 +29,7 @@ Every JSON artifact uses:
 - `schema` identifies the shared outer contract.
 - `source` names the saved evidence family, such as `procfs` or `procfs+ss`.
 - `host_id` is a stable, sanitized host identifier supplied by the operator.
-- `observed_at` is an explicit timezone-aware collection time normalized to UTC. Fractional inputs retain microsecond precision.
+- `observed_at` is an explicit timezone-aware collection time normalized to UTC. Fractional inputs retain up to microsecond precision; more than six fractional-second digits are rejected rather than truncated.
 - `records` contains artifact-specific normalized records.
 
 The envelope is deliberately small so LogLens, telemetry-lab, or later evidence experiments can consume the same outer shape without pretending that every record family has the same inner fields.
