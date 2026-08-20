@@ -10,7 +10,7 @@ This lab combines:
 - PID
 - `/proc/<pid>/stat` start time in clock ticks
 
-The resulting `process_id` is `host_id:pid:start_time_ticks`. It is a snapshot identity, not a cryptographic identity and not a guarantee that two independently collected records observed exactly the same execution context.
+The resulting `process_id` is `host_id:pid:start_time_ticks`. Because start time is measured from system boot and the envelope has no boot identifier, it is a same-boot snapshot identity rather than a cross-reboot durable identity. It is not a cryptographic identity and not a guarantee that two independently collected records observed exactly the same execution context.
 
 ## Evidence envelope
 
@@ -29,10 +29,26 @@ Every JSON artifact uses:
 - `schema` identifies the shared outer contract.
 - `source` names the saved evidence family, such as `procfs` or `procfs+ss`.
 - `host_id` is a stable, sanitized host identifier supplied by the operator.
-- `observed_at` is an explicit timezone-aware collection time normalized to UTC.
+- `observed_at` is an explicit timezone-aware collection time normalized to UTC. Fractional inputs retain microsecond precision.
 - `records` contains artifact-specific normalized records.
 
 The envelope is deliberately small so LogLens, telemetry-lab, or later evidence experiments can consume the same outer shape without pretending that every record family has the same inner fields.
+
+## Temporal cohort contract
+
+`process_diff.json` is directional evidence, so its four inputs must form one comparable temporal cohort:
+
+```text
+before process instant == before socket-link instant
+after process instant  == after socket-link instant
+before instant < after instant
+```
+
+Observation times are compared as timezone-aware instants. For example, `2026-07-05T00:00:00Z` and `2026-07-05T08:00:00+08:00` are equivalent. Equal or reversed before/after instants and mismatched process/socket-link pairs fail closed before any records are compared.
+
+Subsecond precision is retained so two captures within one second can still satisfy strict ordering. If two captures have the same normalized instant, the lab cannot infer their order and refuses to produce a directional diff.
+
+Paired timestamps are cohort provenance, not atomicity proof. Procfs and saved `ss` inputs may still have been collected sequentially, and socket evidence provides PID context rather than an execution-instance identity independent of procfs.
 
 ## Process record
 

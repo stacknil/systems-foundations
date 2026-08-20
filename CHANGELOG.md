@@ -8,7 +8,11 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Preserve fractional `observed_at` precision when normalizing process evidence snapshots to UTC.
+
 ### Fixed
+
+- Reject process diffs when process/socket-link artifacts do not share a snapshot instant or when the before instant is not strictly earlier than the after instant.
 
 ## [v0.3.0] - 2026-08-12
 
