@@ -4,14 +4,18 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from typing import Any, Mapping
 import json
+import re
 
 
 EVIDENCE_SCHEMA = "stacknil.system-evidence.v1"
+_FRACTIONAL_COMPONENT = re.compile(r"[.,](\d+)")
 
 
 def parse_observed_at(value: str) -> datetime:
     if not isinstance(value, str) or not value.strip():
         raise ValueError("observed_at must be a non-empty string")
+    if any(len(digits) > 6 for digits in _FRACTIONAL_COMPONENT.findall(value)):
+        raise ValueError("observed_at supports at most 6 fractional second digits")
     try:
         parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     except ValueError as exc:
