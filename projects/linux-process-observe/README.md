@@ -45,7 +45,9 @@ The three system-evidence `.json` artifacts use the same envelope:
 }
 ```
 
-`observed_at` is required, must include a timezone, and is normalized to UTC. Record ordering is deterministic.
+`observed_at` is required, must include a timezone, and is normalized to UTC. Whole-second inputs keep the existing `...00Z` form; fractional inputs retain up to microsecond precision so captures within the same second remain orderable. Inputs with more than six fractional-second digits fail closed instead of being silently truncated. Record ordering is deterministic.
+
+A diff is produced only for a valid temporal cohort: the process and socket-link artifacts within each snapshot must represent the same observation instant, and the before instant must be strictly earlier than the after instant. Equivalent timezone representations compare as instants, not raw strings. Matching timestamps describe the intended snapshot cohort; they do not prove procfs and `ss` were collected atomically.
 
 ## Workflow
 
@@ -89,6 +91,7 @@ The JSONL can be supplied as `input_path` to telemetry-lab's existing `run windo
 ## Identity And Link Semantics
 
 - `process_id` is `host_id:pid:start_time_ticks`; PID alone is not treated as durable identity because Linux can reuse it.
+- `start_time_ticks` is measured from system boot. Because the envelope has no boot identifier, `process_id` is a same-boot snapshot identity, not a cross-reboot durable identity.
 - `parent_process_id` links to the same snapshot identity when the parent PID is present in the saved procfs export; otherwise it is `null`.
 - UID/GID fields come from the saved procfs `status` record. Parent PID and start time come from `stat`.
 - The executable path is context, not proof of the executable file's contents or integrity.
@@ -97,7 +100,7 @@ The JSONL can be supplied as `input_path` to telemetry-lab's existing `run windo
 
 ## Validation Status
 
-Pytest covers procfs parsing, `ss` parsing, process identity, socket linking, malformed inputs, timezone normalization, golden artifacts, diffs, reports, and the CLI workflow.
+Pytest covers procfs parsing, `ss` parsing, process identity, socket linking, malformed inputs, timezone and subsecond normalization, fail-closed temporal cohort validation, golden artifacts, diffs, reports, and the CLI workflow.
 The adapter adds golden JSONL coverage, an unlinked-socket source fallback test, malformed diff coverage, and CLI error reporting coverage.
 
 ## Non-Goals

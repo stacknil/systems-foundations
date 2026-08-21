@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any
 
-from .models import EVIDENCE_SCHEMA, EvidenceEnvelope
+from .models import EVIDENCE_SCHEMA, EvidenceEnvelope, parse_observed_at
 
 
 def build_diff_envelope(
@@ -45,14 +46,37 @@ def build_diff_envelope(
     )
 
 
-def _validate_artifacts(*envelopes: EvidenceEnvelope) -> None:
+def _validate_artifacts(
+    before_processes: EvidenceEnvelope,
+    after_processes: EvidenceEnvelope,
+    before_links: EvidenceEnvelope,
+    after_links: EvidenceEnvelope,
+) -> None:
+    envelopes = (before_processes, after_processes, before_links, after_links)
     host_ids = {item.host_id for item in envelopes}
     if len(host_ids) != 1:
         raise ValueError("all artifacts must use the same host_id")
-    if envelopes[0].source != "procfs" or envelopes[1].source != "procfs":
+    if before_processes.source != "procfs" or after_processes.source != "procfs":
         raise ValueError("process artifacts must use source=procfs")
-    if envelopes[2].source != "procfs+ss" or envelopes[3].source != "procfs+ss":
+    if before_links.source != "procfs+ss" or after_links.source != "procfs+ss":
         raise ValueError("link artifacts must use source=procfs+ss")
+
+    before_time = _snapshot_observed_at("before", before_processes, before_links)
+    after_time = _snapshot_observed_at("after", after_processes, after_links)
+    if before_time >= after_time:
+        raise ValueError("before observed_at must be earlier than after observed_at")
+
+
+def _snapshot_observed_at(
+    phase: str,
+    processes: EvidenceEnvelope,
+    links: EvidenceEnvelope,
+) -> datetime:
+    process_time = parse_observed_at(processes.observed_at)
+    link_time = parse_observed_at(links.observed_at)
+    if process_time != link_time:
+        raise ValueError(f"{phase} process and link artifacts must represent the same observation time")
+    return process_time
 
 
 def _records(envelope: EvidenceEnvelope, record_type: str) -> list[dict[str, Any]]:

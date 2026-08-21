@@ -4,9 +4,25 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from typing import Any, Mapping
 import json
+import re
 
 
 EVIDENCE_SCHEMA = "stacknil.system-evidence.v1"
+_FRACTIONAL_COMPONENT = re.compile(r"[.,](\d+)")
+
+
+def parse_observed_at(value: str) -> datetime:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError("observed_at must be a non-empty string")
+    if any(len(digits) > 6 for digits in _FRACTIONAL_COMPONENT.findall(value)):
+        raise ValueError("observed_at supports at most 6 fractional second digits")
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise ValueError("observed_at must be ISO 8601") from exc
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise ValueError("observed_at must include a timezone")
+    return parsed
 
 
 @dataclass(frozen=True, slots=True)
@@ -108,14 +124,7 @@ class EvidenceEnvelope:
             raise ValueError("source must be a non-empty string")
         if not isinstance(host_id, str) or not host_id.strip():
             raise ValueError("host_id must be a non-empty string")
-        if not isinstance(observed_at, str) or not observed_at.strip():
-            raise ValueError("observed_at must be a non-empty string")
-        try:
-            parsed_time = datetime.fromisoformat(observed_at.replace("Z", "+00:00"))
-        except ValueError as exc:
-            raise ValueError("observed_at must be ISO 8601") from exc
-        if parsed_time.tzinfo is None or parsed_time.utcoffset() is None:
-            raise ValueError("observed_at must include a timezone")
+        parse_observed_at(observed_at)
         if not isinstance(records, list) or not all(isinstance(item, dict) for item in records):
             raise ValueError("records must be a list of objects")
 

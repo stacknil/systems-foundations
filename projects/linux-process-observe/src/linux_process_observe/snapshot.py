@@ -1,13 +1,20 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import timezone
 from ipaddress import ip_address
 from pathlib import Path
 from typing import Any
 import json
 
-from .models import EVIDENCE_SCHEMA, EvidenceEnvelope, ProcessRecord, ProcessSocketLink, SocketObservation
+from .models import (
+    EVIDENCE_SCHEMA,
+    EvidenceEnvelope,
+    ProcessRecord,
+    ProcessSocketLink,
+    SocketObservation,
+    parse_observed_at,
+)
 from .parsers.procfs import parse_procfs_root
 from .parsers.ss_text import parse_ss_text
 
@@ -131,12 +138,12 @@ def write_envelope(envelope: EvidenceEnvelope, path: str | Path) -> None:
 
 def normalize_observed_at(value: str) -> str:
     try:
-        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        parsed = parse_observed_at(value)
     except ValueError as exc:
-        raise EvidenceInputError("observed-at", "-", exc.__class__.__name__, "observed_at must be ISO 8601") from exc
-    if parsed.tzinfo is None or parsed.utcoffset() is None:
-        raise EvidenceInputError("observed-at", "-", "ValueError", "observed_at must include a timezone")
-    return parsed.astimezone(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+        raise EvidenceInputError("observed-at", "-", exc.__class__.__name__, str(exc)) from exc
+    normalized = parsed.astimezone(timezone.utc)
+    timespec = "microseconds" if normalized.microsecond else "seconds"
+    return normalized.isoformat(timespec=timespec).replace("+00:00", "Z")
 
 
 def _socket_role(state: str) -> str:
