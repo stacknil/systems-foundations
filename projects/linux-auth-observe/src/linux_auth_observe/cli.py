@@ -68,7 +68,10 @@ def main(argv: list[str] | None = None) -> int:
 def _handle_normalize(args: Namespace) -> int:
     input_path = Path(args.input)
     output_path = Path(args.output)
-    source = _detect_source(input_path, args.source)
+    try:
+        source = _detect_source(input_path, args.source)
+    except OSError as exc:
+        return _report_input_error(input_path, exc)
 
     parser_fn, parser_kwargs = _resolve_parser(source, args.year, args.timezone)
 
@@ -83,7 +86,10 @@ def _handle_normalize(args: Namespace) -> int:
         error_output_path.parent.mkdir(parents=True, exist_ok=True)
 
     with ExitStack() as stack:
-        source_handle = stack.enter_context(input_path.open("r", encoding="utf-8"))
+        try:
+            source_handle = stack.enter_context(input_path.open("r", encoding="utf-8"))
+        except OSError as exc:
+            return _report_input_error(input_path, exc)
         output_handle = stack.enter_context(
             output_path.open(
                 "w",
@@ -140,6 +146,15 @@ def _handle_normalize(args: Namespace) -> int:
         file=sys.stderr,
     )
     return 0
+
+
+def _report_input_error(input_path: Path, exc: OSError) -> int:
+    message = exc.strerror if exc.strerror is not None else str(exc)
+    print(
+        f"error input={input_path} type={exc.__class__.__name__} message={message}",
+        file=sys.stderr,
+    )
+    return 1
 
 
 def _handle_filter(args: Namespace) -> int:

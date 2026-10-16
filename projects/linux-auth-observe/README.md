@@ -38,6 +38,19 @@
 - `_PID` is preserved as contextual process metadata when present; it should not be read as a guaranteed identity anchor on its own
 - Unsupported or malformed records fail clearly per line without stopping the full batch
 
+## Normalization Failures
+
+If the input is missing or cannot be opened for reading, `normalize` exits `1`,
+leaves stdout empty, and writes an `error input=... type=... message=...` diagnostic
+to stderr without a Python traceback. This applies to automatic source detection
+and explicitly selected sources. Existing output files are not overwritten.
+The diagnostic message text depends on the operating system.
+
+Per-line parse failures still report the source, line number, and error type to
+stderr while processing continues; a completed batch exits `0`, even if every
+record is malformed. `--error-output` optionally records those per-line failures
+as JSONL. It does not record input-open failures, which have no record or line number.
+
 ## End-to-End Workflow
 
 ```bash

@@ -1,8 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
+import errno
 import json
+import os
+import subprocess
 import sys
+
+import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
@@ -154,3 +159,97 @@ def test_normalize_cli_can_write_structured_parse_errors(tmp_path: Path, capsys)
     assert error_rows[0]["line"] == 2
     assert error_rows[0]["error_type"] == "MalformedSyslogLineError"
     assert error_rows[0]["raw"] == "THIS IS NOT SYSLOG"
+
+
+@pytest.mark.parametrize("source", ["auto", "journal_json"])
+@pytest.mark.parametrize("error_output", [False, True])
+def test_normalize_cli_reports_missing_input_without_traceback(tmp_path: Path, source: str, error_output: bool) -> None:
+    output_path = tmp_path / "events.jsonl"
+    error_path = tmp_path / "errors.jsonl"
+    output_path.write_text("existing events\n", encoding="utf-8")
+    error_path.write_text("existing errors\n", encoding="utf-8")
+    args = ["normalize", "--input", "missing.log", "--source", source, "--output", "events.jsonl"]
+    if error_output:
+        args += ["--error-output", "errors.jsonl"]
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(PROJECT_ROOT / "src")
+    result = subprocess.run(
+        [sys.executable, "-m", "linux_auth_observe", *args],
+        cwd=tmp_path, env=env, capture_output=True, text=True, timeout=10,
+    )
+
+    assert result.returncode == 1
+    assert result.stdout == ""
+    assert result.stderr.startswith("error input=missing.log type=FileNotFoundError message=")
+    assert len(result.stderr.splitlines()) == 1
+    assert "Traceback" not in result.stderr
+    assert output_path.read_text(encoding="utf-8") == "existing events\n"
+    assert error_path.read_text(encoding="utf-8") == "existing errors\n"
+
+
+@pytest.mark.parametrize("source", ["auto", "journal_json"])
+@pytest.mark.parametrize("error_output", [False, True])
+def test_normalize_cli_reports_input_permission_error(tmp_path: Path, capsys, monkeypatch, source: str, error_output: bool) -> None:
+    input_path = tmp_path / "unreadable.log"
+    output_path = tmp_path / "events.jsonl"
+    error_path = tmp_path / "errors.jsonl"
+    input_path.write_text("synthetic input\n", encoding="utf-8")
+    output_path.write_text("existing events\n", encoding="utf-8")
+    error_path.write_text("existing errors\n", encoding="utf-8")
+    original_open = Path.open
+
+    def deny_input_open(path: Path, *args, **kwargs):
+        if path == input_path:
+            raise PermissionError(errno.EACCES, "Permission denied", str(path))
+        return original_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", deny_input_open)
+    args = ["normalize", "--input", str(input_path), "--source", source, "--output", str(output_path)]
+    if error_output:
+        args += ["--error-output", str(error_path)]
+    exit_code = main(args)
+    captured = capsys.readouterr()
+
+    assert exit_code == 1
+    assert captured.out == ""
+    assert captured.err.startswith(f"error input={input_path} type=PermissionError message=")
+    assert len(captured.err.splitlines()) == 1
+    assert "Traceback" not in captured.err
+    assert output_path.read_text(encoding="utf-8") == "existing events\n"
+    assert error_path.read_text(encoding="utf-8") == "existing errors\n"
+
+
+def test_normalize_cli_does_not_relabel_output_open_failures(tmp_path: Path) -> None:
+    input_path = tmp_path / "empty.jsonl"
+    input_path.write_text("", encoding="utf-8")
+
+    with pytest.raises(OSError):
+        main(["normalize", "--input", str(input_path), "--source", "journal_json", "--output", str(tmp_path)])
+
+
+def test_normalize_cli_reports_oserror_without_strerror(tmp_path: Path, capsys, monkeypatch) -> None:
+    input_path = tmp_path / "input.jsonl"
+    output_path = tmp_path / "events.jsonl"
+    error_path = tmp_path / "errors.jsonl"
+    input_path.write_text("synthetic input\n", encoding="utf-8")
+    failure = OSError("synthetic input open failure")
+    assert failure.strerror is None
+    original_open = Path.open
+
+    def fail_input_open(path: Path, *args, **kwargs):
+        if path == input_path:
+            raise failure
+        return original_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", fail_input_open)
+    exit_code = main([
+        "normalize", "--input", str(input_path), "--source", "journal_json",
+        "--output", str(output_path), "--error-output", str(error_path),
+    ])
+    captured = capsys.readouterr()
+
+    assert exit_code == 1
+    assert captured.out == ""
+    assert captured.err == f"error input={input_path} type=OSError message={failure}\n"
+    assert not output_path.exists()
+    assert not error_path.exists()
