@@ -3,7 +3,10 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from .models import EVIDENCE_SCHEMA, EvidenceEnvelope, parse_observed_at
+from .models import (
+    EVIDENCE_SCHEMA, EvidenceEnvelope, parse_observed_at,
+    socket_link_identity, validate_process_record_identity,
+)
 
 
 def build_diff_envelope(
@@ -15,10 +18,10 @@ def build_diff_envelope(
 ) -> EvidenceEnvelope:
     _validate_artifacts(before_processes, after_processes, before_links, after_links)
 
-    before_process_map = _records_by_key(before_processes, record_type="process", key="process_id")
-    after_process_map = _records_by_key(after_processes, record_type="process", key="process_id")
-    before_link_map = _links_by_identity(before_links)
-    after_link_map = _links_by_identity(after_links)
+    before_process_map = _processes_by_identity(before_processes)
+    after_process_map = _processes_by_identity(after_processes)
+    before_link_map = _links_by_identity(before_links, before_process_map)
+    after_link_map = _links_by_identity(after_links, after_process_map)
 
     changes: list[dict[str, Any]] = []
     for identity in sorted(after_process_map.keys() - before_process_map.keys()):
@@ -88,35 +91,53 @@ def _records(envelope: EvidenceEnvelope, record_type: str) -> list[dict[str, Any
     return records
 
 
-def _records_by_key(envelope: EvidenceEnvelope, *, record_type: str, key: str) -> dict[str, dict[str, Any]]:
+def _processes_by_identity(envelope: EvidenceEnvelope) -> dict[str, dict[str, Any]]:
     records: dict[str, dict[str, Any]] = {}
-    for record in _records(envelope, record_type):
-        value = record.get(key)
+    pids: set[int] = set()
+    for record in _records(envelope, "process"):
+        value = record.get("process_id")
         if not isinstance(value, str) or not value:
-            raise ValueError(f"{record_type} record missing {key}")
+            raise ValueError("process record missing process_id")
         if value in records:
-            raise ValueError(f"duplicate {record_type} {key}: {value}")
+            raise ValueError(f"duplicate process process_id: {value}")
+        validate_process_record_identity(record, envelope.host_id)
+        if record["pid"] in pids:
+            raise ValueError(f"duplicate process pid: {record['pid']}")
+        pids.add(record["pid"])
         records[value] = record
     return records
 
 
-def _link_identity(record: dict[str, Any]) -> str:
-    process = record.get("process_id") or f"pid={record.get('pid', 'unknown')}"
-    return (
-        f"{process}|{record.get('protocol')}|{record.get('state')}|"
-        f"{record.get('local_address')}:{record.get('local_port')}|"
-        f"{record.get('remote_address')}:{record.get('remote_port')}"
-    )
-
-
-def _links_by_identity(envelope: EvidenceEnvelope) -> dict[str, dict[str, Any]]:
+def _links_by_identity(
+    envelope: EvidenceEnvelope, processes: dict[str, dict[str, Any]]
+) -> dict[str, dict[str, Any]]:
     links: dict[str, dict[str, Any]] = {}
     for record in _records(envelope, "process_socket_link"):
-        identity = _link_identity(record)
+        _validate_link_context(record, processes)
+        identity = socket_link_identity(record)
         if identity in links:
             raise ValueError(f"duplicate process_socket_link identity: {identity}")
         links[identity] = record
     return links
+
+
+def _validate_link_context(record: dict[str, Any], processes: dict[str, dict[str, Any]]) -> None:
+    if record.get("linked") is False:
+        if any(record.get(field) is not None for field in ("process_id", "executable", "uid", "gid")):
+            raise ValueError("unlinked socket must not claim procfs identity or context")
+        return
+    if record.get("linked") is not True:
+        raise ValueError("socket linked must be boolean")
+    process_id = record.get("process_id")
+    process = processes.get(process_id) if isinstance(process_id, str) else None
+    if process is None:
+        raise ValueError("linked socket process_id must reference the paired process artifact")
+    for field in ("pid", "executable", "uid", "gid"):
+        if (
+            field not in process or field not in record
+            or type(record[field]) is not type(process[field]) or record[field] != process[field]
+        ):
+            raise ValueError(f"linked socket {field} must match procfs process")
 
 
 def _field_changes(before: dict[str, Any], after: dict[str, Any]) -> dict[str, dict[str, Any]]:

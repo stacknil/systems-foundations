@@ -95,7 +95,10 @@ The JSONL can be supplied as `input_path` to telemetry-lab's existing `run windo
 - `parent_process_id` links to the same snapshot identity when the parent PID is present in the saved procfs export; otherwise it is `null`.
 - UID/GID fields come from the saved procfs `status` record. Parent PID and start time come from `stat`.
 - The executable path is context, not proof of the executable file's contents or integrity.
-- Socket links use PID context reported by `ss`. A socket is retained with `linked=false` when no process context is available.
+- Socket links use PID context reported by `ss`. `linked=true` means an unambiguous PID association within the supplied records, not independent verification of the socket's execution instance. A socket is retained with `linked=false` when no matching procfs context is available.
+- A link's `process_name` preserves the name reported by `ss`; the selected process's name remains in `process_snapshot.json`. A disagreement is retained as context, without proving PID reuse or malicious behavior. Names can legitimately change, and matching names cannot exclude PID reuse between source captures.
+- Link `process_id`, executable, UID and GID come from the PID-associated procfs record. Duplicate PID candidates are rejected rather than reconciled by input order. `diff` rejects process IDs inconsistent with their host/PID/start fields, dangling linked identities, and links whose procfs-derived fields disagree with the paired process artifact, even when timestamps match.
+- The standalone telemetry adapter validates identity self-consistency; it does not have the paired procfs artifact and cannot independently revalidate a socket's process attribution. Link-name-only changes do not create new events: the link diff remains added/removed by the existing identity and endpoint key.
 - `exposure=loopback`, `wildcard`, or `specific` describes the local bind address; it is not a firewall or reachability verdict.
 
 ## Validation Status

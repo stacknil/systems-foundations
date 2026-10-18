@@ -24,7 +24,11 @@ def parse_procfs_root(root: str | Path, *, host_id: str) -> list[ProcessRecord]:
             key=lambda item: int(item.name),
         )
     ]
-    processes_by_pid = {item.pid: item for item in records}
+    processes_by_pid: dict[int, ProcessRecord] = {}
+    for item in records:
+        if item.pid in processes_by_pid:
+            raise ValueError(f"duplicate procfs pid: {item.pid}")
+        processes_by_pid[item.pid] = item
     return [
         replace(
             item,

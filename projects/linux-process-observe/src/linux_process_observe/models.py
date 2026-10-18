@@ -11,6 +11,25 @@ EVIDENCE_SCHEMA = "stacknil.system-evidence.v1"
 _FRACTIONAL_COMPONENT = re.compile(r"[.,](\d+)")
 
 
+def validate_process_record_identity(record: Mapping[str, Any], host_id: str) -> None:
+    """Check declared fields, without asserting independent instance verification."""
+    pid = record.get("pid")
+    ticks = record.get("start_time_ticks")
+    if type(pid) is not int or type(ticks) is not int:
+        raise ValueError("process identity requires integer pid and start_time_ticks")
+    if record.get("process_id") != f"{host_id}:{pid}:{ticks}":
+        raise ValueError("process_id must match host_id, pid and start_time_ticks")
+
+
+def socket_link_identity(record: Mapping[str, Any]) -> str:
+    process = record.get("process_id") or f"pid={record.get('pid', 'unknown')}"
+    return (
+        f"{process}|{record.get('protocol')}|{record.get('state')}|"
+        f"{record.get('local_address')}:{record.get('local_port')}|"
+        f"{record.get('remote_address')}:{record.get('remote_port')}"
+    )
+
+
 def parse_observed_at(value: str) -> datetime:
     if not isinstance(value, str) or not value.strip():
         raise ValueError("observed_at must be a non-empty string")

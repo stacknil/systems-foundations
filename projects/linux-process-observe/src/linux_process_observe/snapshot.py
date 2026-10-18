@@ -73,7 +73,11 @@ def build_snapshot_artifacts(
 def link_processes_to_sockets(
     processes: list[ProcessRecord], observations: list[SocketObservation]
 ) -> list[ProcessSocketLink]:
-    processes_by_pid = {item.pid: item for item in processes}
+    processes_by_pid: dict[int, ProcessRecord] = {}
+    for item in processes:
+        if item.pid in processes_by_pid:
+            raise ValueError(f"duplicate procfs pid: {item.pid}")
+        processes_by_pid[item.pid] = item
     links: list[ProcessSocketLink] = []
 
     for socket in observations:
@@ -86,7 +90,7 @@ def link_processes_to_sockets(
                     linked=process is not None,
                     process_id=process.process_id if process else None,
                     pid=process.pid if process else (ref.pid if ref else None),
-                    process_name=process.name if process else (ref.name if ref else None),
+                    process_name=ref.name if ref else None,
                     executable=process.executable if process else None,
                     uid=process.uid if process else None,
                     gid=process.gid if process else None,

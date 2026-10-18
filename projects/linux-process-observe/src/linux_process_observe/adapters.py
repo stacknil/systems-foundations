@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any
 import json
 
-from .models import EVIDENCE_SCHEMA, EvidenceEnvelope
+from .models import EVIDENCE_SCHEMA, EvidenceEnvelope, socket_link_identity, validate_process_record_identity
 
 
 _EVENT_TYPES = {
@@ -90,10 +90,12 @@ def _map_record(
     if event_prefix == "process":
         for process_record in (before, after):
             if process_record is not None:
-                _validate_process_identity(process_record, identity, index)
+                _validate_process_identity(process_record, identity, index, diff.host_id)
         source = _required_string(selected, "process_id", index)
         target = _required_string(selected, "executable", index)
     else:
+        if socket_link_identity(selected) != identity:
+            raise ValueError(f"record {index} socket identity must match observation")
         source = _socket_source(diff.host_id, selected, index)
         target = _socket_target(selected, index)
 
@@ -166,11 +168,12 @@ def _change_records(
 
 
 def _validate_process_identity(
-    record: dict[str, Any], identity: str, index: int
+    record: dict[str, Any], identity: str, index: int, host_id: str
 ) -> None:
     process_id = _required_string(record, "process_id", index)
     if process_id != identity:
         raise ValueError(f"record {index} process_id must match identity")
+    validate_process_record_identity(record, host_id)
 
 
 def _socket_source(host_id: str, record: dict[str, Any], index: int) -> str:
