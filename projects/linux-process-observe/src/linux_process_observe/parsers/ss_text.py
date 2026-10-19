@@ -6,6 +6,8 @@ from ..models import ProcessRef, SocketObservation
 
 
 PROCESS_RE = re.compile(r'"(?P<name>[^"]+)",pid=(?P<pid>\d+)')
+_PROCESS_REF_PATTERN = r'\("[^"]+",pid=\d+,fd=\d+\)'
+_USERS_FIELD_RE = re.compile(rf'users:\({_PROCESS_REF_PATTERN}(?:,{_PROCESS_REF_PATTERN})*\)')
 
 
 def parse_ss_text(text: str) -> list[SocketObservation]:
@@ -79,8 +81,8 @@ def _parse_endpoint(token: str, line_number: int) -> tuple[str, str | int]:
 
 
 def _parse_process_refs(token: str, line_number: int) -> list[ProcessRef]:
-    matches = [ProcessRef(name=match.group("name"), pid=int(match.group("pid"))) for match in PROCESS_RE.finditer(token)]
-    if "users:" in token and not matches:
+    if token and _USERS_FIELD_RE.fullmatch(token) is None:
         raise ValueError(f"malformed ss process field on line {line_number}")
+    matches = [ProcessRef(name=match.group("name"), pid=int(match.group("pid"))) for match in PROCESS_RE.finditer(token)]
     unique = {(item.pid, item.name): item for item in matches}
     return [unique[key] for key in sorted(unique)]
