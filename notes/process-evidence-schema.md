@@ -76,6 +76,27 @@ Saved `ss -H -a -n -t -u -p` output can connect a TCP or UDP socket to a PID whe
 
 Missing process context is not converted into false certainty. The socket remains in the artifact with `linked=false`.
 
+`process_name` on a socket link is the name reported by `ss`, including when it
+differs from the PID-associated procfs process's `name`. This preserves both
+observations. A name disagreement can follow legitimate changes and does not prove
+PID reuse or misconduct; agreement cannot rule out reuse between saved captures.
+
+`linked=true` describes an unambiguous PID association in the supplied records.
+It does not independently verify that `ss` observed the procfs execution instance.
+The link's `process_id`, executable, UID and GID are procfs-derived context. Duplicate
+PID candidates fail instead of selecting the first or last record. During `diff`,
+process IDs must agree with their declared host/PID/start fields, and linked records
+must reference the paired process record with matching PID, executable, UID and GID.
+An unlinked record must not claim that procfs identity or context. Contradictory raw
+artifacts remain available; a failed comparison produces no downstream diff.
+
+The telemetry adapter checks change-identity self-consistency. Its diff input does
+not contain the complete paired procfs artifacts, so it cannot repeat cohort
+validation or prove instance ownership. Names are contextual and excluded from the
+existing link identity: a name-only difference does not create a link-change event.
+Rejecting name mismatches as an identity test would both lose legitimate observations
+and still miss PID/name reuse. No confidence or verification field is introduced.
+
 `wildcard` means the socket was bound to an any-address value such as `0.0.0.0` or `::`. It does not prove external reachability because firewall, namespace, routing, and host policy are outside this snapshot.
 
 ## Diff interpretation
