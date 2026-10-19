@@ -23,6 +23,22 @@ proc/
 
 `cmdline` may contain real NUL separators or the text escape `\0`. `exe` contains the resolved `/proc/<pid>/exe` target as UTF-8 text; a real symlink is also accepted.
 
+### Saved ss users field
+
+After the six socket columns, process context may be absent or a complete users field:
+
+```text
+tail      := empty | "users:(" reference ("," reference)* ")"
+reference := "(" '"' nonempty-name '"' ",pid=" digits ",fd=" digits ")"
+```
+
+For example, `users:(("worker-a",pid=120,fd=3),("worker-b",pid=220,fd=4))` is accepted. Names may contain spaces, commas and parentheses inside quotes, but not double quotes. PID and FD text use decimal digits; key order and delimiters must match the grammar, without extra internal spacing. PID conversion is unchanged, and FD is not stored. References are sorted and deduplicated by `(pid, name)`, including when only FD differs.
+
+An absent field retains an unlinked socket. A present empty list, malformed member, truncated delimiter, missing wrapper or unconsumed suffix rejects the saved input rather than admitting a matching subset. The CLI returns 1 with contextual `input=ss` stderr and no new snapshot output. Error line numbers count nonblank lines, including an optional header.
+
+This is a bounded saved-input profile. Thread attributes, alternate key order, quote escapes, fd-less references and extra tail metadata are unsupported; acceptance of every native ss variant is not claimed.
+
+
 ## Outputs
 
 | Artifact | Contents |
