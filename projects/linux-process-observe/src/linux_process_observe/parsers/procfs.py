@@ -5,6 +5,7 @@ from pathlib import Path
 import os
 
 from ..models import ProcessRecord
+from .saved_files import read_saved_bytes, read_saved_text
 
 
 REQUIRED_STATUS_FIELDS = ("Name", "State", "PPid", "Uid", "Gid")
@@ -17,13 +18,15 @@ def parse_procfs_root(root: str | Path, *, host_id: str) -> list[ProcessRecord]:
     if not root_path.is_dir():
         raise NotADirectoryError(f"proc root is not a directory: {root_path}")
 
-    records = [
-        _parse_pid_directory(path, host_id=host_id)
-        for path in sorted(
+    try:
+        pid_paths = sorted(
             (item for item in root_path.iterdir() if item.is_dir() and item.name.isdigit()),
             key=lambda item: int(item.name),
         )
-    ]
+    except OSError as error:
+        error.add_note("enumerate proc root")
+        raise
+    records = [_parse_pid_directory(path, host_id=host_id) for path in pid_paths]
     processes_by_pid: dict[int, ProcessRecord] = {}
     for item in records:
         if item.pid in processes_by_pid:
@@ -42,7 +45,12 @@ def _parse_pid_directory(pid_path: Path, *, host_id: str) -> ProcessRecord:
     pid = int(pid_path.name)
     status = _parse_status(_read_text(pid_path, "status"), pid=pid)
     stat = _parse_stat(_read_text(pid_path, "stat"), pid=pid)
-    argv = _parse_cmdline(_read_bytes(pid_path, "cmdline"))
+    raw_cmdline = _read_bytes(pid_path, "cmdline")
+    try:
+        argv = _parse_cmdline(raw_cmdline)
+    except ValueError as error:
+        error.add_note(f"pid {pid}")
+        raise
     executable = _read_executable(pid_path)
 
     if int(status["PPid"]) != stat["ppid"]:
@@ -74,14 +82,14 @@ def _parse_pid_directory(pid_path: Path, *, host_id: str) -> ProcessRecord:
 
 def _read_text(pid_path: Path, name: str) -> str:
     try:
-        return (pid_path / name).read_text(encoding="utf-8")
+        return read_saved_text(pid_path / name, context=f"pid {pid_path.name}: {name}")
     except FileNotFoundError as exc:
         raise ValueError(f"pid {pid_path.name}: missing {name}") from exc
 
 
 def _read_bytes(pid_path: Path, name: str) -> bytes:
     try:
-        return (pid_path / name).read_bytes()
+        return read_saved_bytes(pid_path / name, context=f"pid {pid_path.name}: {name}")
     except FileNotFoundError as exc:
         raise ValueError(f"pid {pid_path.name}: missing {name}") from exc
 
@@ -89,9 +97,14 @@ def _read_bytes(pid_path: Path, name: str) -> bytes:
 def _read_executable(pid_path: Path) -> str:
     path = pid_path / "exe"
     try:
-        value = os.readlink(path) if path.is_symlink() else path.read_text(encoding="utf-8").strip()
+        value = (os.readlink(os.fsencode(path)).decode("utf-8") if path.is_symlink()
+                 else read_saved_text(path, context=f"pid {pid_path.name}: exe").strip())
     except FileNotFoundError as exc:
         raise ValueError(f"pid {pid_path.name}: missing exe") from exc
+    except (OSError, UnicodeError) as error:
+        if not getattr(error, "__notes__", None):
+            error.add_note(f"pid {pid_path.name}: exe")
+        raise
     if not value:
         raise ValueError(f"pid {pid_path.name}: empty exe")
     return value
