@@ -16,6 +16,7 @@ from .models import (
     parse_observed_at,
 )
 from .parsers.procfs import parse_procfs_root
+from .parsers.saved_files import read_saved_text
 from .parsers.ss_text import parse_ss_text
 
 
@@ -28,6 +29,12 @@ class EvidenceInputError(ValueError):
 
     def __str__(self) -> str:
         return self.message
+
+    @classmethod
+    def from_exception(cls, input_name: str, path: str | Path, error: Exception) -> EvidenceInputError:
+        reason = error.strerror if isinstance(error, OSError) and error.strerror is not None else str(error)
+        message = ": ".join([*getattr(error, "__notes__", []), reason])
+        return cls(input_name, str(path), type(error).__name__, message)
 
 
 def build_snapshot_artifacts(
@@ -45,13 +52,13 @@ def build_snapshot_artifacts(
     try:
         processes = parse_procfs_root(proc_root, host_id=normalized_host)
     except (FileNotFoundError, NotADirectoryError, OSError, UnicodeError, ValueError) as exc:
-        raise EvidenceInputError("proc-root", str(proc_root), exc.__class__.__name__, str(exc)) from exc
+        raise EvidenceInputError.from_exception("proc-root", proc_root, exc) from exc
 
     ss_path_obj = Path(ss_path)
     try:
-        observations = parse_ss_text(ss_path_obj.read_text(encoding="utf-8"))
+        observations = parse_ss_text(read_saved_text(ss_path_obj, context="ss"))
     except (FileNotFoundError, OSError, UnicodeError, ValueError) as exc:
-        raise EvidenceInputError("ss", str(ss_path_obj), exc.__class__.__name__, str(exc)) from exc
+        raise EvidenceInputError.from_exception("ss", ss_path_obj, exc) from exc
 
     process_envelope = EvidenceEnvelope(
         schema=EVIDENCE_SCHEMA,

@@ -61,8 +61,12 @@ def _handle_snapshot(args: Namespace) -> int:
         return 1
 
     output_dir = Path(args.output_dir)
-    write_envelope(process_snapshot, output_dir / "process_snapshot.json")
-    write_envelope(socket_links, output_dir / "process_socket_links.json")
+    try:
+        write_envelope(process_snapshot, output_dir / "process_snapshot.json")
+        write_envelope(socket_links, output_dir / "process_socket_links.json")
+    except OSError as error:
+        _print_error("snapshot", EvidenceInputError.from_exception("output", output_dir, error))
+        return 1
     print(
         f"snapshot wrote {len(process_snapshot.records)} processes and {len(socket_links.records)} process/socket links",
         file=sys.stderr,
@@ -90,9 +94,13 @@ def _handle_diff(args: Namespace) -> int:
         return 1
 
     output_dir = Path(args.output_dir)
-    write_envelope(diff, output_dir / "process_diff.json")
-    output_dir.mkdir(parents=True, exist_ok=True)
-    (output_dir / "report.md").write_text(build_markdown_report(diff), encoding="utf-8", newline="\n")
+    try:
+        write_envelope(diff, output_dir / "process_diff.json")
+        output_dir.mkdir(parents=True, exist_ok=True)
+        (output_dir / "report.md").write_text(build_markdown_report(diff), encoding="utf-8", newline="\n")
+    except OSError as error:
+        _print_error("diff", EvidenceInputError.from_exception("output", output_dir, error))
+        return 1
     return 0
 
 

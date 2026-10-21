@@ -134,3 +134,56 @@ The adapter adds golden JSONL coverage, an unlinked-socket source fallback test,
 ## Related Note
 
 - [Process evidence and envelope schema](../../notes/process-evidence-schema.md)
+
+## Saved Filesystem Failure Contract
+
+Use a trusted, stable saved export on a local filesystem. Discovery keeps its
+existing profile: numeric entries resolving to directories are parsed, including
+directory symlinks; other entries are ignored, including broken numeric directory
+links. This is not a completeness check for every numbered entry or a path sandbox.
+
+Required `status`, `stat`, `cmdline`, text `exe`, and `ss` inputs must resolve to
+regular files. Directory, FIFO, socket and device objects are rejected. Reads check
+the opened descriptor as well as the path; POSIX nonblocking open prevents a FIFO
+replacement between inspection and open from waiting for a writer. This does not
+provide an arbitrary filesystem timeout or protection against all concurrent changes.
+
+A real `exe` symlink remains supported: its UTF-8 target text is context and is
+read without following the executable target. A dangling executable target is
+therefore valid evidence; a broken required-file link is incomplete input. Invalid
+UTF-8 in text or executable-link targets rejects the snapshot before output writes.
+Executable paths remain descriptive, not authenticated identity or integrity proof.
+
+Input failures return CLI exit 1 with operation, input category, native error type
+and field/PID context where available. Missing PID files keep the existing
+`ValueError` classification, as does invalid UTF-8 in `cmdline`; `PermissionError`
+and other UTF-8 decoding error types are retained. The supplied input path remains
+visible. Filesystem and UTF-8 diagnostics do not echo raw field contents; existing
+parser diagnostics can include an offending malformed field value.
+An unreadable export cannot become successful empty evidence. A readable empty
+export with empty `ss` input remains valid.
+
+`snapshot` validates its inputs before creating or changing output artifacts;
+input-validation failure preserves existing evidence. Output filesystem failures
+in `snapshot` and `diff` report `input=output` and exit 1. Multi-artifact writes
+remain sequential, **not transactional**: a later write failure can leave an
+earlier artifact updated. No atomic acquisition or multi-file rollback is claimed.
+
+Run the failure suite from this project directory:
+
+```bash
+python -m pip install -e ".[dev]"
+python -m pytest tests/test_native_read_failures.py -v
+python -m pytest -q
+```
+
+Permission controls require a non-root POSIX user on a filesystem enforcing mode
+bits, such as native ext4 under WSL2. Root and non-POSIX runs explicitly skip those
+controls; link/FIFO probes also declare their POSIX requirement. Tests use synthetic
+files and restore denied permissions in `finally` blocks. Existing golden evidence,
+schemas, adapter semantics and successful command names are unchanged.
+
+Decisions: skipping unreadable discovered PIDs would silently lose evidence;
+rejecting every symlink would break the supported executable context profile.
+Both alternatives are rejected. Transactional output publication needs a separate
+storage/compatibility design and is not implied by these input-read guarantees.
