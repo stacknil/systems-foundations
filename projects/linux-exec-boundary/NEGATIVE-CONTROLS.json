@@ -1,0 +1,148 @@
+{
+  "schema": "exec-boundary.negative-controls.v1",
+  "valid_control": "Native normal, pre-spawn refusal and failed-setup originals accepted; 21 independent corruptions rejected.",
+  "corruptions": {
+    "capability_flag": {
+      "errors": [
+        "unsupported cgroup claim"
+      ],
+      "rejected": true
+    },
+    "cleanup_status": {
+      "errors": [
+        "direct child not reaped"
+      ],
+      "rejected": true
+    },
+    "exit_code": {
+      "errors": [
+        "observed exit status",
+        "completed classification"
+      ],
+      "rejected": true
+    },
+    "false_landlock": {
+      "errors": [
+        "Landlock profile/ABI",
+        "Landlock rights",
+        "silent Landlock downgrade"
+      ],
+      "rejected": true
+    },
+    "false_seccomp": {
+      "errors": [
+        "silent seccomp downgrade"
+      ],
+      "rejected": true
+    },
+    "resource_state": {
+      "errors": [
+        "resource limit differs: open_files"
+      ],
+      "rejected": true
+    },
+    "run_identity": {
+      "errors": [
+        "run identity"
+      ],
+      "rejected": true
+    },
+    "termination_reason": {
+      "errors": [
+        "independent expected outcome",
+        "CLI/report contradiction",
+        "signaled classification"
+      ],
+      "rejected": true
+    },
+    "truncation_metadata": {
+      "errors": [
+        "output truncation metadata"
+      ],
+      "rejected": true
+    },
+    "unconfirmed_landlock": {
+      "errors": [
+        "unconfirmed setup control: landlock",
+        "Landlock profile/ABI",
+        "Landlock rights"
+      ],
+      "rejected": true
+    },
+    "unconfirmed_limits_setup": {
+      "errors": [
+        "unconfirmed setup control: limits_setup"
+      ],
+      "rejected": true
+    },
+    "unconfirmed_no_new_privs": {
+      "errors": [
+        "unconfirmed setup control: no_new_privs"
+      ],
+      "rejected": true
+    },
+    "unconfirmed_seccomp": {
+      "errors": [
+        "unconfirmed setup control: seccomp"
+      ],
+      "rejected": true
+    },
+    "unspawned_cgroup": {
+      "errors": [
+        "unsupported cgroup claim",
+        "unspawned control claimed: cgroup"
+      ],
+      "rejected": true
+    },
+    "unspawned_group_confirmed": {
+      "errors": [
+        "unspawned control claimed: group_confirmed"
+      ],
+      "rejected": true
+    },
+    "unspawned_landlock": {
+      "errors": [
+        "unconfirmed setup control: landlock",
+        "unspawned control claimed: landlock",
+        "Landlock profile/ABI",
+        "Landlock rights"
+      ],
+      "rejected": true
+    },
+    "unspawned_limits_setup": {
+      "errors": [
+        "unconfirmed setup control: limits_setup",
+        "unspawned control claimed: limits_setup"
+      ],
+      "rejected": true
+    },
+    "unspawned_no_new_privs": {
+      "errors": [
+        "unconfirmed setup control: no_new_privs",
+        "unspawned control claimed: no_new_privs"
+      ],
+      "rejected": true
+    },
+    "unspawned_pidfd": {
+      "errors": [
+        "unspawned control claimed: pidfd"
+      ],
+      "rejected": true
+    },
+    "unspawned_seccomp": {
+      "errors": [
+        "unconfirmed setup control: seccomp",
+        "unspawned control claimed: seccomp"
+      ],
+      "rejected": true
+    },
+    "unspawned_waitid_pidfd": {
+      "errors": [
+        "unspawned control claimed: waitid_pidfd"
+      ],
+      "rejected": true
+    }
+  },
+  "all_rejected": true,
+  "scope": "checker consistency, not independent proof of kernel sandboxing"
+}

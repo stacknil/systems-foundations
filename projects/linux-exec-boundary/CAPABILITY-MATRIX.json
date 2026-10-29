@@ -1,0 +1,115 @@
+{
+  "schema": "exec-boundary.capability-matrix.v1",
+  "baseline_commit": "2c14763864b3d26bc7a67774e22f9ba78f9329c6",
+  "environment": {
+    "kernel": "6.18.54.1-microsoft-standard-WSL2",
+    "arch": "x86_64",
+    "non_root": true,
+    "native_fs": "ext4",
+    "gcc": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+    "cmake": "cmake version 3.28.3",
+    "ctest": "ctest version 3.28.3",
+    "python": "3.12.3",
+    "own_policy_status": {
+      "CapEff": "0000000000000000",
+      "NoNewPrivs": "0",
+      "Seccomp": "2",
+      "Seccomp_filters": "1"
+    }
+  },
+  "source_of_authority": "unprivileged native probes and actual fixture operations",
+  "features": {
+    "pidfd_open_and_signal": {
+      "status": "SUPPORTED_AND_TESTED",
+      "evidence": "owned child; signal 0; no numeric retarget"
+    },
+    "waitid_P_PIDFD": {
+      "status": "SUPPORTED_AND_TESTED",
+      "evidence": "exact child exit and native EINTR/retry"
+    },
+    "no_new_privs": {
+      "status": "SUPPORTED_AND_TESTED",
+      "evidence": "child set/get plus post-exec witness"
+    },
+    "landlock": {
+      "status": "SUPPORTED_AND_TESTED",
+      "abi": 7,
+      "enforced_access_classes": [
+        "READ_FILE",
+        "READ_DIR",
+        "WRITE_FILE",
+        "MAKE_REG",
+        "REMOVE_FILE",
+        "TRUNCATE"
+      ],
+      "evidence": "successful setup before exec; six allowed/denied operation classes after exec"
+    },
+    "seccomp": {
+      "status": "SUPPORTED_AND_TESTED",
+      "evidence": "getppid allowed in control; EPERM under installed filter across exec",
+      "inherited_mode_is_not_request_installation": true
+    },
+    "rlimits": {
+      "status": "SUPPORTED_AND_TESTED",
+      "controls": [
+        "CPU",
+        "AS",
+        "FSIZE",
+        "NOFILE",
+        "CORE"
+      ],
+      "evidence": "set/get and post-exec values; SIGXCPU, ENOMEM, SIGXFSZ, EMFILE and disabled cores"
+    },
+    "close_range": {
+      "status": "SUPPORTED_AND_TESTED",
+      "evidence": "unexpected inherited FD 57 removed; injected FD 9 detected"
+    },
+    "subreaper": {
+      "status": "SUPPORTED_AND_TESTED",
+      "evidence": "cooperating descendant adopted/reaped after leader exit"
+    },
+    "dedicated_session_process_group": {
+      "status": "SUPPORTED_AND_TESTED",
+      "whole_tree_guarantee": false
+    },
+    "cgroup_v2_presence": {
+      "status": "SUPPORTED_AND_TESTED",
+      "present": true
+    },
+    "cgroup_delegation": {
+      "status": "UNAVAILABLE",
+      "errno": 13,
+      "evidence": "own current subgroup mkdir denied; current cgroup/procs not writable"
+    },
+    "cgroup_membership_and_kill": {
+      "status": "NOT_PROBED",
+      "reason": "no writable delegation; no root/host changes"
+    },
+    "cgroup_backend": {
+      "status": "UNAVAILABLE",
+      "strict_requests": "refused before fork"
+    },
+    "atomic_clone3_pidfd": {
+      "status": "NOT_PROBED",
+      "reason": "gated fork plus exclusive unreaped-child ownership chosen"
+    },
+    "detached_descendant_native": {
+      "status": "NOT_PROBED",
+      "execution": "NOT_RUN",
+      "reason": "verified secondary containment absent"
+    },
+    "clang_format": {
+      "status": "UNAVAILABLE",
+      "fallback": "checked LF/final-newline/tab/NUL/trailing-whitespace conventions"
+    },
+    "clang_tidy": {
+      "status": "UNAVAILABLE",
+      "fallback": "Clang built-in static analyzer executed"
+    },
+    "privileged_provisioning": {
+      "status": "DENIED_BY_POLICY",
+      "reason": "no sudo or host-wide settings"
+    }
+  }
+}
