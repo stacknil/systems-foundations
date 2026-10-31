@@ -1,0 +1,77 @@
+name: Linux execution boundary
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    name: Execution boundary (${{ matrix.compiler }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [g++, clang++]
+    defaults:
+      run:
+        working-directory: projects/linux-exec-boundary
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Verify nonprivileged runner and existing toolchain
+        env:
+          CXX: ${{ matrix.compiler }}
+        run: |
+          test "$(id -u)" -ne 0
+          command -v "$CXX"
+          "$CXX" --version
+          cmake --version
+          ctest --version
+          python3 --version
+          uname -r
+          git rev-parse HEAD
+
+      - name: Configure and build approved local fixtures
+        env:
+          CXX: ${{ matrix.compiler }}
+        run: |
+          cmake -S . -B build -DCMAKE_CXX_COMPILER="$CXX" -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build --parallel 2
+          python3 tools/check_style.py
+
+      - name: Probe capabilities without host configuration changes
+        run: timeout 10s build/capability_probe > build/runner-capabilities.json
+
+      # Reviewed fixed fixtures only: watchdog/resource/alarm bounds, exact owned
+      # child targeting, no detached fixture, no arbitrary executable input.
+      # Existing CTest per-test timeouts are 8s and 50s. Sanitizers remain a
+      # separately qualified local run, not an assumed hosted-runner capability.
+      - name: Execute bounded native lifecycle and qualification tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Record actual capability and conditional outcomes
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ("runner-capabilities.json", "evidence/capabilities.json",
+                       "evidence/results.json", "evidence/negative-controls.json"):
+              path = Path("build") / name
+              if path.is_file():
+                  print(name)
+                  print(json.dumps(json.loads(path.read_text()), indent=2, sort_keys=True))
+              else:
+                  print(name + ": NOT_PRODUCED; inspect earlier step failure")
+          print("CTest success does not mean every optional scenario executed.")
+          print("E09 native remains NOT_RUN; no arbitrary-tree containment claim.")
+          print("Hosted sanitizer qualification: NOT_RUN; local ASan/UBSan evidence is separate.")
+          PY

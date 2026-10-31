@@ -1,0 +1,589 @@
+{
+  "schema": "exec-boundary.failure-matrix.v1",
+  "capability_limit": "no delegated cgroup / no safe escaped-descendant execution",
+  "cases": [
+    {
+      "id": "E01",
+      "title": "Child exits before pidfd observation",
+      "expected_independent_contract": "observe exact termination or failed pre-exec launch; reap child",
+      "method": "native+injected-native",
+      "status": "PASS",
+      "observations": {
+        "E01-immediate": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 32,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "COMPLETED",
+          "status": "PASS"
+        },
+        "E01-before-pidfd": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 30,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "LAUNCH_FAILED",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E02",
+      "title": "Cancellation/exit race",
+      "expected_independent_contract": "COMPLETED or CANCELLED with unchanged raw wait status",
+      "method": "native bounded schedules",
+      "status": "PASS",
+      "observations": {
+        "E02-cancel-0": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 31,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "CANCELLED",
+          "status": "PASS"
+        },
+        "E02-cancel-1": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 35,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "CANCELLED",
+          "status": "PASS"
+        },
+        "E02-cancel-2": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 50,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "CANCELLED",
+          "status": "PASS"
+        },
+        "E02-cancel-3": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 52,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "COMPLETED",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E03",
+      "title": "Timeout/completion race",
+      "expected_independent_contract": "COMPLETED or TIMED_OUT; retain first stop decision",
+      "method": "native bounded schedules",
+      "status": "PASS",
+      "observations": {
+        "E03-timeout-0": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 31,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "TIMED_OUT",
+          "status": "PASS"
+        },
+        "E03-timeout-1": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 50,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "TIMED_OUT",
+          "status": "PASS"
+        },
+        "E03-timeout-2": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 52,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "COMPLETED",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E04",
+      "title": "Exec fails after spawn",
+      "expected_independent_contract": "LAUNCH_FAILED; setup distinct from exec witness",
+      "method": "injected native invalid execveat",
+      "status": "PASS",
+      "observations": {
+        "E04-exec": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 31,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "LAUNCH_FAILED",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E05",
+      "title": "stdout closes, stderr retained",
+      "expected_independent_contract": "COMPLETED; retain complete stderr, empty stdout",
+      "method": "native",
+      "status": "PASS",
+      "observations": {
+        "E05-stdout-closed": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 47,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "COMPLETED",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E06",
+      "title": "Output exceeds capture limit",
+      "expected_independent_contract": "COMPLETED; 256 retained / 262144 observed bytes per stream",
+      "method": "native finite flood",
+      "status": "PASS",
+      "observations": {
+        "E06-output": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 32,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "COMPLETED",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E07",
+      "title": "Cooperating descendant",
+      "expected_independent_contract": "TIMED_OUT; one descendant reaped; no survivor",
+      "method": "native",
+      "status": "PASS",
+      "observations": {
+        "E07-tree": {
+          "adopted_reaped": 1,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 112,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "TIMED_OUT",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E08",
+      "title": "Descendant outlives leader",
+      "expected_independent_contract": "COMPLETED leader; adopted descendant reaped; group cleanup limited",
+      "method": "native",
+      "status": "PASS",
+      "observations": {
+        "E08-orphan": {
+          "adopted_reaped": 1,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 32,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "COMPLETED",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E09",
+      "title": "Descendant changes session/group",
+      "expected_independent_contract": "native NOT_RUN; no secondary containment; strict refusal retained",
+      "method": "static/mock only",
+      "status": "NOT_RUN",
+      "observations": {
+        "E09-detached": {
+          "reason": "no verified delegated secondary containment; no detached fixture supplied",
+          "static_control": "strict-tree refuses before fork; process-group limit documented",
+          "status": "NOT_RUN"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "Native detached case NOT_RUN; no detached process created. Strict refusal control has separate observed cleanup."
+    },
+    {
+      "id": "E10",
+      "title": "Resource failure",
+      "expected_independent_contract": "SIGXCPU / ENOMEM / SIGXFSZ / EMFILE / SIGABRT with CORE=0; no artifact leak",
+      "method": "native bounded",
+      "status": "PASS",
+      "observations": {
+        "E10-cpu": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 1033,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "SIGNALED",
+          "status": "PASS"
+        },
+        "E10-memory": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 32,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "COMPLETED",
+          "status": "PASS"
+        },
+        "E10-fsize": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 36,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "SIGNALED",
+          "status": "PASS"
+        },
+        "E10-nofile": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 32,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "COMPLETED",
+          "status": "PASS"
+        },
+        "core-disabled": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 36,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "SIGNALED",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E11",
+      "title": "Landlock unavailable/denied",
+      "expected_independent_contract": "POLICY_UNAVAILABLE before fork; actual kernel availability remains separate",
+      "method": "availability fault injection",
+      "status": "PASS",
+      "observations": {
+        "E11-unavailable": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 0,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "POLICY_UNAVAILABLE",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E12",
+      "title": "seccomp setup failure",
+      "expected_independent_contract": "invalid BPF rejected natively; LAUNCH_FAILED before fixture exec",
+      "method": "native setup-failure injection",
+      "status": "PASS",
+      "observations": {
+        "E12-seccomp-failure": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 31,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "LAUNCH_FAILED",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E13",
+      "title": "Strict unsupported control",
+      "expected_independent_contract": "POLICY_UNAVAILABLE; no spawned process",
+      "method": "native admission refusal",
+      "status": "PASS",
+      "observations": {
+        "E13-strict": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 0,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "POLICY_UNAVAILABLE",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E14",
+      "title": "Cleanup interrupted",
+      "expected_independent_contract": "TIMED_OUT; signals/EINTR during cleanup handled; no survivor",
+      "method": "native notifications and native blocking-wait EINTR control",
+      "status": "PASS",
+      "observations": {
+        "E14-interrupted": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 15,
+          "cleanup_signal_notifications": 15,
+          "elapsed_ms": 63,
+          "interrupted_calls": 30,
+          "oracle": "accepted",
+          "signal_notifications": 31,
+          "state": "TIMED_OUT",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E15",
+      "title": "Unexpected inherited descriptor",
+      "expected_independent_contract": "CONTAINMENT_UNCONFIRMED; do not report normal boundary success",
+      "method": "injected native FD inheritance",
+      "status": "PASS",
+      "observations": {
+        "E15-inherit": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 32,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "CONTAINMENT_UNCONFIRMED",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E16",
+      "title": "Stale process identity",
+      "expected_independent_contract": "reaped own-child pidfd returns ESRCH; no numeric retarget",
+      "method": "native owned-child probe",
+      "status": "PASS",
+      "observations": {
+        "E16-stale": {
+          "evidence": "own reaped child pidfd returns ESRCH; no numeric retarget",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E17",
+      "title": "False enforcement report",
+      "expected_independent_contract": "independent oracle rejects corrupted feature claims",
+      "method": "oracle negative controls",
+      "status": "PASS",
+      "observations": {
+        "E17-false-enforcement": {
+          "evidence": "oracle rejects cgroup/seccomp/Landlock flag corruptions",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "Independent reviews reproduced false pre-spawn and failed-setup enforcement claims. Regressions now reject these alongside the original controls; 21 total corruption controls.",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E18",
+      "title": "Report/exit contradiction",
+      "expected_independent_contract": "independent oracle rejects reason/code contradictions",
+      "method": "oracle negative controls",
+      "status": "PASS",
+      "observations": {
+        "E18-report-status": {
+          "evidence": "oracle rejects termination/exit corruptions",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E19",
+      "title": "Parent SIGTERM",
+      "expected_independent_contract": "CANCELLED; direct child and owned descendants reaped",
+      "method": "native exact-pidfd signal",
+      "status": "PASS",
+      "observations": {
+        "E19-parent-term": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 46,
+          "interrupted_calls": 1,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "CANCELLED",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    },
+    {
+      "id": "E20",
+      "title": "Failed run temporary artifacts",
+      "expected_independent_contract": "EXITED_NONZERO 42; owned scratch empty after cleanup",
+      "method": "native",
+      "status": "PASS",
+      "observations": {
+        "E20-artifact": {
+          "adopted_reaped": 0,
+          "cleanup_interruptions": 0,
+          "cleanup_signal_notifications": 0,
+          "elapsed_ms": 32,
+          "interrupted_calls": 0,
+          "oracle": "accepted",
+          "signal_notifications": 0,
+          "state": "EXITED_NONZERO",
+          "status": "PASS"
+        }
+      },
+      "bounds": "watchdog wall 5s, CPU hard 4s, file/FD/core caps; fixture alarm 3s (descendant 2s)",
+      "input_and_environment": "fixed argv/scenario in tests/qualify.py; request/observer manifests retained privately",
+      "first_invariant_to_check": "truthful setup/outcome, exact owned targets, bounded capture and observed reaping",
+      "red_green_evidence": "negative/failure is injected or scheduled; handled outcome accepted by independent oracle",
+      "cleanup_obligations": "watchdog reports zero adopted survivors/unexpected reaps; source-owned scratch empty; FD census stable"
+    }
+  ]
+}

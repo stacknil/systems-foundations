@@ -1,0 +1,119 @@
+{
+  "schema": "exec-boundary.execution.v1",
+  "request": {
+    "request_id": "request-normal",
+    "run_id": "run-normal",
+    "approved_executable": "$BUILD/boundary_fixture",
+    "working_directory": "owned-scratch",
+    "environment": [
+      "LANG=C",
+      "LC_ALL=C"
+    ],
+    "argv": [
+      "boundary_fixture",
+      "normal"
+    ],
+    "scenario": "normal",
+    "profile": "direct",
+    "injected_fault": "none",
+    "timeout_ms": 300,
+    "cancel_after_ms": -1,
+    "output_limit": 256,
+    "limits": {
+      "cpu_soft": 1,
+      "cpu_hard": 2,
+      "address_space": 134217728,
+      "file_size": 4096,
+      "open_files": 32,
+      "core_size": 0
+    }
+  },
+  "setup": {
+    "spawned": true,
+    "confirmed": true,
+    "exec_observed": true,
+    "stage": "fixture_observed_after_exec",
+    "errno": 0
+  },
+  "features": {
+    "pidfd": true,
+    "waitid_pidfd": true,
+    "group_confirmed": true,
+    "no_new_privs": true,
+    "limits_setup": true,
+    "landlock": false,
+    "landlock_abi": 7,
+    "landlock_rights": [],
+    "seccomp": false,
+    "cgroup": false
+  },
+  "outcome": {
+    "state": "COMPLETED",
+    "exit_code": 0,
+    "signal": null,
+    "wait_code": 1,
+    "wait_status": 0,
+    "timed_out": false,
+    "cancelled": false,
+    "parent_sigterm": false,
+    "elapsed_ms": 32
+  },
+  "termination": {
+    "term_attempted": true,
+    "kill_attempted": true,
+    "term_errno": 0,
+    "kill_errno": 0
+  },
+  "cleanup": {
+    "direct_child_reaped": true,
+    "adopted_reaped": 0,
+    "complete": true,
+    "pipes_closed": true,
+    "artifacts_removed": true,
+    "owned_fd_delta": 0,
+    "group_cleanup_attempted": true,
+    "group_identity_pinned": true,
+    "whole_tree_confirmed": false
+  },
+  "observed": {
+    "child_pid": 545,
+    "pgid": 545,
+    "sid": 545,
+    "nnp": 1,
+    "seccomp": 2,
+    "inherited_seccomp": 2,
+    "inherited_nnp": 0,
+    "unexpected_fds": 0,
+    "cpu_soft": 1,
+    "cpu_hard": 2,
+    "address_space": 134217728,
+    "file_size": 4096,
+    "open_files": 32,
+    "core_size": 0,
+    "interrupted_calls": 0,
+    "cleanup_interruptions": 0,
+    "signal_notifications": 0,
+    "cleanup_signal_notifications": 0
+  },
+  "output": {
+    "stdout": {
+      "captured_bytes": 7,
+      "total_bytes": 7,
+      "truncated": false,
+      "eof_observed": true,
+      "hex": "6e6f726d616c0a"
+    },
+    "stderr": {
+      "captured_bytes": 0,
+      "total_bytes": 0,
+      "truncated": false,
+      "eof_observed": true,
+      "hex": ""
+    }
+  },
+  "enforcement_profile": "direct-child-and-best-effort-process-group",
+  "unsupported": [
+    "strict-whole-tree-cgroup",
+    "general-purpose-sandbox"
+  ]
+}

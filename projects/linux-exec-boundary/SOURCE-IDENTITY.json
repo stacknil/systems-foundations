@@ -1,0 +1,28 @@
+{
+  "base": "2c14763864b3d26bc7a67774e22f9ba78f9329c6",
+  "candidate_sha256": "37841e5daff18b50f69f99bd102d8502c8cd7acf2ad8737c281a5bab5592d40b",
+  "scope": "All candidate files except this identity file and independent audit report; no bytecode included.",
+  "files": {
+    "CAPABILITY-MATRIX.json": "0af3c472cd6c9ce46ce6395a6eb1d70b78a7547727f86ae377933e58c74ca417",
+    "CMakeLists.txt": "ed6d3c3a6b1f40d1b43d22991acec38ea1797a0c94a48b1193b00df52304edd4",
+    "EXECUTION-CONTRACT.md": "f437ba554a3f2f5868b280ee06ff9a64509f22539bdffd89007cec7fa1996e66",
+    "EXECUTION-MANIFEST.json": "b54d98a0b2e949f4879d4b65d96e05572e484a82ea54765fd4d1669d836cdccb",
+    "FAILURE-MATRIX.json": "0901f004aea3882f601ddc735790337284cf500d7967994dcd31cc2ac7d09ddb",
+    "FAILURE-REPORT.md": "a8e5ce2c944ffd088ad04de4035c1fb42206b666bf65c149b92c0ef15354996a",
+    "fixtures/fixture.cpp": "787be45b277a94312aed9e4362f7bc4f0cd5156b513eec6bcbd3a6e8e9216452",
+    "include/boundary.hpp": "764c8292a76f6fad4ca566fe78ab8160be87189c2154f65136bc4716877aaecd",
+    "NEGATIVE-CONTROLS.json": "dac0248cb69ae37a069b13bc60cf984249d9912f5b0a86e509ee787f587a380c",
+    "README.md": "2e40d055bc824b9af13a877adb11eccc539a0e1b1c0d8b7436965ee9a135abd1",
+    "REPRODUCTION.md": "1b5dbdca97f5a4702cabe21a82f7eec452337d2f39f76a3f724e93c75a3fcc6b",
+    "src/main.cpp": "247e3ff9f5aae1c559d0ef84cee31f288445fd364d85f322dfd59a967ff8bd2f",
+    "src/manifest.cpp": "ae8aae516ba2e1aa63b87cd8ef64ef689c08bf094c56a2b1e63c87c4cbe9e0a0",
+    "src/supervisor.cpp": "7a4b351f14f89ecc301e48b2934f779b87c164b81fefadb2ff9160bb06947f9f",
+    "tests/lifecycle.cpp": "c69b4e79e2f22f8664796b8f931e29fad5d7d6f4ef1b2ef0906e3feb5f65f09c",
+    "tests/oracle.py": "1a9a7fa56ab5c60b7ee02f597db8deadbe822162a92237e15de3ae593d64b128",
+    "tests/qualify.py": "672515be6c5077562cc3dc731bc97a0959aa44a64541c2fa24d423d63d9ded1e",
+    "THREAT-MODEL.md": "bf97b1edecb981aac7c32a7af7f97b36f8188100a0700d2efae0909e90097c69",
+    "tools/capability_probe.cpp": "0056443bb31e3bd27a1c33bb3026a6e8009de26a172ae2ff1d84df92c440ba71",
+    "tools/check_style.py": "0ef88dd0510eae0053a6c005b44c84944fdd2c691a174f8b24e6778abe370404",
+    "tools/render_report.py": "3954e146cc067264a30ab8ef21f2a665aa2e32297431a486cd2199e89c3ed2c6"
+  }
+}
