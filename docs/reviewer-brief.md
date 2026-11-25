@@ -2,15 +2,7 @@
 
 For the C++20 supervisor, start with the [execution boundary reviewer guide](execution-boundary-review.md). The sections below cover the saved-evidence labs.
 
-## Problem
-
-Systems learning is often broad but hard to review. Reviewers need small labs that show concrete Linux evidence handling instead of vague “I studied systems” claims.
-
-## What it does
-
-`systems-foundations` is a repository of small, reviewable Linux mini-labs.
-
-Current stable labs:
+## Choose a saved-evidence lab
 
 - `projects/linux-auth-observe` for normalizing Linux auth evidence, filtering it, and generating short Markdown summaries
 - `projects/linux-socket-observe` for turning saved `ss` and `iproute2` snapshots into normalized JSON and Markdown diffs
@@ -74,7 +66,3 @@ python -m linux_process_observe adapt --input tests/golden/diff/process_diff.jso
 - `linux-auth-observe` does not cover `audit.log`
 - `linux-socket-observe` does not do live capture or traffic analysis
 - labs are separate mini-projects; the process adapter is a file-format bridge, not a unified runtime
-
-## Next milestone
-
-Keep hardening the four existing labs and their evidence contracts without adding a fifth mini-lab by default.

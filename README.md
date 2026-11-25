@@ -2,11 +2,7 @@
 
 This repository pairs a C++20 Linux process supervisor with four saved-evidence labs. Start with the [execution boundary reviewer guide](docs/execution-boundary-review.md) for process lifecycle, kernel enforcement and cleanup evidence.
 
-These labs support the evidence assumptions used by LogLens and telemetry-lab.
-
-The goal is to keep each lab narrow, deterministic, and easy to inspect end to end: input evidence, normalization, filtering, reporting, and notes that explain the basics without pretending to be a full platform.
-
-## Current Mini-Labs
+## Saved-evidence labs
 
 - [`projects/linux-auth-observe`](projects/linux-auth-observe/README.md): Linux auth evidence mini-lab for exported journald JSON lines and distro auth syslog files. This was the first stable mini-lab in `v0.1.0`.
 - [`projects/linux-socket-observe`](projects/linux-socket-observe/README.md): local Linux networking state mini-lab for `ss` plus selected `iproute2` snapshots. It builds one normalized snapshot artifact and generates a Markdown diff between two snapshots.
