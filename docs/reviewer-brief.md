@@ -1,5 +1,7 @@
 # Reviewer brief
 
+For the C++20 supervisor, start with the [execution boundary reviewer guide](execution-boundary-review.md). The sections below cover the saved-evidence labs.
+
 ## Problem
 
 Systems learning is often broad but hard to review. Reviewers need small labs that show concrete Linux evidence handling instead of vague “I studied systems” claims.

@@ -76,8 +76,8 @@ Keep each lab narrow, local-file-based, reviewable, and easy to validate with sa
 
 ## Current release state
 
-- Latest stable release: `v0.3.0`
+- Latest stable release: `v0.4.0`
 - `v0.1.0`: first credible mini-lab, centered on `linux-auth-observe`
 - `v0.2.0`: second credible mini-lab, adding `linux-socket-observe`
 - `v0.3.0`: 408-to-security bridge, `linux-permission-observe`, `linux-process-observe`, and the process-diff to telemetry-lab JSONL adapter
-- Unreleased: follow-up hardening only; do not infer a fifth mini-lab from this release
+- `v0.4.0`: standalone C++20 execution boundary lab and tighter process snapshot validation.

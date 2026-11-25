@@ -1,6 +1,6 @@
 # systems-foundations
 
-`systems-foundations` is a training repository for small, reviewable labs around Linux and systems fundamentals.
+This repository pairs a C++20 Linux process supervisor with four saved-evidence labs. Start with the [execution boundary reviewer guide](docs/execution-boundary-review.md) for process lifecycle, kernel enforcement and cleanup evidence.
 
 These labs support the evidence assumptions used by LogLens and telemetry-lab.
 
@@ -13,8 +13,8 @@ The goal is to keep each lab narrow, deterministic, and easy to inspect end to e
 - [`projects/linux-permission-observe`](projects/linux-permission-observe/README.md): saved Linux permission state mini-lab for file ownership/mode, group membership, and sudoers drift. Released in `v0.3.0`.
 - [`projects/linux-process-observe`](projects/linux-process-observe/README.md): saved procfs identity and `ss` context mini-lab that links processes to listening sockets and network endpoints. It also adapts process diffs into telemetry-lab-compatible JSONL without adding another mini-lab. Released in `v0.3.0`.
 
-Latest stable release: [v0.3.0](https://github.com/stacknil/systems-foundations/releases/latest)
-Latest release notes: [v0.3.0](docs/release-v0.3.0.md)
+Latest stable release: [v0.4.0](https://github.com/stacknil/systems-foundations/releases/latest)
+Latest release notes: [v0.4.0](docs/release-v0.4.0.md)
 Changelog: [CHANGELOG.md](CHANGELOG.md)
 Docs index: [docs/README.md](docs/README.md)
 Reviewer brief: [docs/reviewer-brief.md](docs/reviewer-brief.md)

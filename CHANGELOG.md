@@ -2,9 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [v0.4.0] - 2026-11-25
 
 ### Added
+
+- C++20 Linux execution boundary lab with a fixed fixture, capability probe, lifecycle tests and an independent manifest oracle.
 
 ### Changed
 
