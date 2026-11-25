@@ -4,18 +4,21 @@
 
 This repository is a training ground for small, deterministic Linux/systems foundations mini-labs.
 
-Current mini-labs:
+The C++20 supervisor in `projects/linux-exec-boundary` runs fixed local fixtures. Follow its execution contract, capability checks and watchdog instructions when changing that lab.
+
+The four saved-evidence labs are:
 
 - `projects/linux-auth-observe`: normalize saved Linux auth evidence, filter normalized JSONL, and generate Markdown summaries.
 - `projects/linux-socket-observe`: normalize saved Linux networking state snapshots and generate Markdown diffs.
 - `projects/linux-permission-observe`: normalize saved Linux permission state and report permission drift.
 - `projects/linux-process-observe`: normalize saved procfs process identity, link saved socket context, and report diffs.
 
-Keep each lab narrow, local-file-based, reviewable, and easy to validate with sanitized fixtures and pytest.
+Use sanitized saved inputs and pytest for the Python labs. Build and test the C++ lab with CMake and CTest.
 
 ## Hard boundaries
 
 - Keep changes scoped to the active mini-lab and directly related docs:
+  - `projects/linux-exec-boundary/**`
   - `projects/linux-auth-observe/**`
   - `projects/linux-socket-observe/**`
   - `projects/linux-permission-observe/**`
